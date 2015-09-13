@@ -50,4 +50,16 @@
     <Class>Mysoft.Task.TaskSet.SendMessageJob</Class>
     <IsExcute>true</IsExcute>
   </Task>
+
+  <Task>
+    <TaskID>5</TaskID>
+    <!--动态修改配置文件后该任务会对比修改信息,然后修改现有任务运行信息，无需重启Windows服务-->
+    <TaskName>Job修改任务</TaskName>
+    <TaskParam></TaskParam>
+    <!--运行频率设置 每5分钟运行一次-->
+    <CronExpressionString>0 0/5 * * * ? </CronExpressionString>
+    <Assembly>Mysoft.Task</Assembly>
+    <Class>Mysoft.Task.TaskSet.ConfigJob</Class>
+    <IsExcute>true</IsExcute>
+  </Task>
 </TaskSet>

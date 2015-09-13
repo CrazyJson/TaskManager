@@ -33,6 +33,9 @@
     <Reference Include="Common.Logging">
       <HintPath>..\TaskManager\DLL\Common.Logging.dll</HintPath>
     </Reference>
+    <Reference Include="Common.Logging.Core">
+      <HintPath>..\TaskManager\DLL\Common.Logging.Core.dll</HintPath>
+    </Reference>
     <Reference Include="HttpHelper">
       <HintPath>..\TaskManager\DLL\HttpHelper.dll</HintPath>
     </Reference>

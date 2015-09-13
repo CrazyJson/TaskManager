@@ -57,6 +57,7 @@
     <Compile Include="TaskSet\TestJob.cs" />
     <Compile Include="TaskSet\ExpressProgressJob.cs" />
     <Compile Include="TaskSet\SendMessageJob.cs" />
+    <Compile Include="TaskSet\ConfigJob.cs" />
     <Compile Include="Utils\ExpressUtil.cs" />
     <Compile Include="Utils\IpProxyGet.cs" />
   </ItemGroup>

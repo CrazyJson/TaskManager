@@ -126,6 +126,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="DLL\Common.Logging.Core.dll" />
     <Content Include="DLL\Common.Logging.dll" />
     <Content Include="DLL\HtmlAgilityPack.dll" />
     <Content Include="DLL\HttpHelper.dll" />

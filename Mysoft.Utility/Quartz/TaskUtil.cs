@@ -105,5 +105,10 @@ namespace Mysoft.Utility
             }
             return list;
         }
+
+        /// <summary>
+        /// 系统当前运行的任务集合
+        /// </summary>
+        public static List<TaskUtil> CurrentTaskList = new List<TaskUtil>();
     }
 }

@@ -88,13 +88,9 @@ namespace Mysoft.Utility
                         {
                             try
                             {
-                                ScheduleJob(taskUtil);
-                                LogHelper.WriteLog(string.Format("任务“{0}”启动成功,未来5次运行时间如下:", taskUtil.TaskName));
-                                List<DateTime> list = GetTaskeFireTime(taskUtil.CronExpressionString, 5);
-                                foreach (var time in list)
-                                {
-                                    LogHelper.WriteLog(time.ToString());
-                                }
+                                ScheduleJob(taskUtil);                                
+                                //记录当前系统正常运行的任务
+                                TaskHelper.CurrentTaskList.Add(taskUtil);
                             }
                             catch (Exception e)
                             {
@@ -112,18 +108,28 @@ namespace Mysoft.Utility
         }
 
         /// <summary>
+        /// 删除现有任务
+        /// </summary>
+        /// <param name="JobKey"></param>
+        public static void DeleteJob(string JobKey)
+        {
+            JobKey jk = new JobKey(JobKey);
+            if (scheduler.CheckExists(jk))
+            {
+                //任务已经存在则删除
+                scheduler.DeleteJob(jk);
+            }
+        }
+
+        /// <summary>
         /// 启用任务
         /// <param name="taskUtil">任务信息</param>
         /// <returns>返回任务trigger</returns>
         /// </summary>
         public static void ScheduleJob(TaskUtil taskUtil)
         {
-            JobKey jk = new JobKey(taskUtil.TaskID);
-            if (scheduler.CheckExists(jk))
-            {
-                //任务已经存在则删除
-                scheduler.DeleteJob(jk);
-            }
+            //先删除现有已存在任务
+            DeleteJob(taskUtil.TaskID);
             //验证是否正确的Cron表达式
             if (ValidExpression(taskUtil.CronExpressionString))
             {
@@ -135,6 +141,12 @@ namespace Mysoft.Utility
                 //添加任务执行参数
                 job.JobDataMap.Add("TaskParam", taskUtil.TaskParam);
                 scheduler.ScheduleJob(job, trigger);
+                LogHelper.WriteLog(string.Format("任务“{0}”启动成功,未来5次运行时间如下:", taskUtil.TaskName));
+                List<DateTime> list = GetTaskeFireTime(taskUtil.CronExpressionString, 5);
+                foreach (var time in list)
+                {
+                    LogHelper.WriteLog(time.ToString());
+                }
             }
             else
             {

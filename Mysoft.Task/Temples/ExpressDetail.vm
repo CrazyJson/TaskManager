@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>快递进度</title>
+    <meta name="renderer" content="webkit">   
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="kik-transparent-statusbar" content="true" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <style>
+        html{overflow-y:scroll}html,body{text-align:left}body,input,textarea,select,button{font:12px "Microsoft YaHei",Verdana,arial,sans-serif;line-height:22px}.section{width:600px;margin:0 auto}#queryContext{width:580px}table{border-collapse:collapse;border-spacing:0}.result-top{width:578px;height:43px;background-color:#fbfbfb;border:1px solid #90bfff;border-bottom:0}.result-top span{display:inline-block;height:43px;line-height:43px;vertical-align:middle;font-size:14px}.result-top .col1{width:184px;text-align:center;font-weight:bold;border-right:1px solid #ddd;color:#333}.result-top .col2{width:303px;text-align:center;font-weight:bold;color:#333}.result-info2{width:610px;border-top:1px solid #ddd}.result-info2{width:580px;border:1px solid #90bfff}.result-info2 td{padding:10px;color:#878787;border-bottom:1px solid #d8d8d8;background-color:#fbfbfb}.result-info2 .status{width:30px;background:url("http://cdn.kuaidi100.com/images/ico_status.gif") -50px center no-repeat #fbfbfb}.result-info2 .status{width:30px;background:url("http://cdn.kuaidi100.com/images/ico_status.gif") -50px center no-repeat #fbfbfb}.result-info2 .status-first{background:url("http://cdn.kuaidi100.com/images/ico_status.gif") 0 center no-repeat #fbfbfb}.result-info2 .status-check{background:url("http://cdn.kuaidi100.com/images/ico_status.gif") -150px center no-repeat #fbfbfb}.result-info2 .status-wait{background:url("http://cdn.kuaidi100.com/images/ico_status.gif") -100px center no-repeat #fbfbfb}.result-info2 .last td{color:#ff8c00;border-bottom:0;background-color:#fff}.result-info2 .row1{width:140px;text-align:right}.select-com{margin-top:20px;padding-left:7px;height:30px;font-size:14px;font-weight:bold}.select-com a#selectComBtn{padding-right:24px;cursor:pointer}.select-com span{margin-right:10px;padding:2px 0 2px 24px}.select-com .ico-clock{background:url("http://cdn.kuaidi100.com/images/ico_index.png") -10px -463px no-repeat}
+    </style>
+</head>
+<body>
+	#set($ExpressPic = "http://cdn.kuaidi100.com/images/all/16/"+$V.ExpressCompanyCode+".png")
+    <div class="section">
+        <div id="selectCom" class="select-com relative hidden" style="display: block;"> 
+            <span style="background: url($ExpressPic) 0px 3px no-repeat;"><a id="selectComBtn">$ExpressCompany($V.ExpressNo)</a></span> 
+            #if($T.Count>1)<span id="timeCost" class="ico-clock hidden" style="display: inline;">已耗时$TotalTime</span>#end
+        </div>
+         <div id="queryContext" class="mt10px hidden relative" style="z-index: 4; display: block;">
+        <div class="result-top"><span class="col1">时间</span><span class="col2">地点和跟踪进度</span></div>
+        <table id="queryResult2" class="result-info2" cellspacing="0">
+            <tbody>
+			#set($i = 1)
+			#foreach($p in $T)
+			   <tr>
+                    <td class="row1">$p.Time.ToString("yyyy-MM-dd")</td>
+                    <td class="status #if($Status=="3" && $i==$T.Count)status-check #else #if($i==1)status-first #end #end">&nbsp;</td>
+                    <td>$p.Context</td>
+                </tr>
+				#set($i = 1+$i)
+			#end
+            </tbody>
+        </table>
+    </div>
+    </div>
+</body>
+</html>

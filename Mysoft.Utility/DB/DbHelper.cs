@@ -183,7 +183,7 @@ namespace Mysoft.Utility
                 }
                 SqlDataReader dr = cmd.ExecuteReader();
                 List<T> list = new List<T>();
-                T obj=default(T);
+                T obj = default(T);
                 // 循环读取结果集
                 while (dr.Read())
                 {
@@ -205,19 +205,20 @@ namespace Mysoft.Utility
         {
             Type type = typeof(T);
             T obj = (T)type.FastNew();
-            PropertyInfo[] properties = type.GetCanReadPropertyInfo();
-            foreach (PropertyInfo pInfo in properties)
+            PropertyInfo[] properties = type.GetCanWritePropertyInfo();
+            for (int i = 0; i < dr.FieldCount; i++)
             {
-                if (pInfo.CanWrite && dr.GetOrdinal(pInfo.Name) > -1)
+                PropertyInfo pInfo = properties.FirstOrDefault(e => e.Name.Equals(dr.GetName(i)));
+                if (pInfo != null)
                 {
                     Type ptype = pInfo.PropertyType;
                     if (!ptype.IsEnum)
                     {
-                        pInfo.FastSetValue(obj, dr[pInfo.Name]);
+                        pInfo.FastSetValue(obj, dr[i]);
                     }
                     else
                     {
-                        pInfo.FastSetValue(obj, Enum.ToObject(ptype, dr[pInfo.Name]));
+                        pInfo.FastSetValue(obj, Enum.ToObject(ptype, dr[i]));
                     }
                 }
             }
@@ -324,6 +325,6 @@ namespace Mysoft.Utility
             }
             cmd.CommandText = strSQL;
             return cmd;
-        }     
+        }
     }
 }

@@ -101,10 +101,13 @@ namespace Mysoft.Task.Utils
                 JToken value = null;
 
                 //快递单当前的状态
-                string state = string.Empty;
+                int state=-1;
                 if (jo.TryGetValue("state", out value))
                 {
-                    state = value.ToString();
+                    if (!Int32.TryParse(value.ToString(), out state))
+                    {
+                        return false;
+                    }
                 }
 
                 //查询结果状态 
@@ -123,7 +126,7 @@ namespace Mysoft.Task.Utils
                         {
                             return false;
                         }
-                        if (state.Equals("3") || state.Equals("4") || state.Equals("6"))
+                        if (state==3 || state==4 || state==6)
                         {
                             //3：签收，收件人已签收；4：退签，即货物由于用户拒签、超区等原因退回，而且发件人已经签收；
                             //6：退回，货物正处于退回发件人的途中；
@@ -145,6 +148,8 @@ namespace Mysoft.Task.Utils
                                     item = list[i];
                                     item.ExpressNo = ExpressNo;
                                     item.GroupNo = i + 1;
+                                    //相对准确，但不是完全准确的一个状态
+                                    item.State = state;
                                 }
 
 
@@ -200,7 +205,7 @@ namespace Mysoft.Task.Utils
         /// </summary>
         /// <param name="ExpressNo">快递单号</param>
         /// <param name="state">快递最终状态</param>
-        private static void SaveExpressHistoryInfo(string ExpressNo, string state)
+        private static void SaveExpressHistoryInfo(string ExpressNo, int state)
         {
             SQLHelper.ExecuteNonQuery(@"INSERT INTO dbo.p_ExpressHistoryInfo(ExpressGUID,ExpressNo,ExpressCompanyCode,Receiver,State,CreatedOn)
                 SELECT  ExpressGUID ,ExpressNo ,ExpressCompanyCode ,Receiver ,@State,CreatedOn FROM dbo.p_ExpressInfo WHERE ExpressNo=@ExpressNo;
@@ -399,6 +404,15 @@ namespace Mysoft.Task.Utils
         ///每条跟综信息的描述
         /// </summary>
         public string Context
+        {
+            get;
+            set;
+        }
+
+        ///<summary>
+        ///当前进度所对应快递状态
+        /// </summary>
+        public int State
         {
             get;
             set;

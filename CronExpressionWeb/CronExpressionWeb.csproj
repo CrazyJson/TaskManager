@@ -66,7 +66,6 @@
     <Content Include="Cron\cron.js" />
     <Content Include="Cron\icon.css" />
     <Content Include="Cron\jquery-1.6.2.min.js" />
-    <Content Include="Cron\jquery.easyui.js" />
     <Content Include="Cron\jquery.easyui.min.js" />
     <Content Include="Cron\themes\bootstrap\easyui.css" />
     <Content Include="Cron\themes\bootstrap\images\panel_tools.png" />

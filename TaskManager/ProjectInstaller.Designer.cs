@@ -39,8 +39,7 @@
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.Description = "基于Quartz.NET的定时任务管理服务,可自定义Job添加自己的服务.服务介绍：http://www.cnblogs.com/yanweidie/p/3564" +
-    "062.html";
+            this.serviceInstaller1.Description = "基于Quartz.NET的定时任务管理服务,可自定义Job添加自己的服务";
             this.serviceInstaller1.DisplayName = "定时任务管理服务";
             this.serviceInstaller1.ServiceName = "MysoftTM";
             this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;

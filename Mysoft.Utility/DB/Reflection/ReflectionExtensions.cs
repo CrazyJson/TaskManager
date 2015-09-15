@@ -161,7 +161,7 @@ namespace Mysoft.Utility
         /// <param name="type">类型</param>
         /// <param name="containtStaticProperty">是否包含静态属性</param>
         /// <returns>属性</returns>
-        public static PropertyInfo[] GetCanWritePropertyInfo(this Type type)
+        public static PropertyInfo[] GetCanReadPropertyInfo(this Type type, bool containtStaticProperty=false)
         {
             if (type == null)
             {
@@ -170,8 +170,12 @@ namespace Mysoft.Utility
             PropertyInfo[] properties = (PropertyInfo[])s_propertyDict[type];
             if (properties == null)
             {
-                properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static).Where(e => e.CanWrite).ToArray();
-                s_propertyDict[type] = properties;
+                BindingFlags flags = BindingFlags.Instance | BindingFlags.Public;
+                if (containtStaticProperty)
+                {
+                    flags = flags | BindingFlags.Static;
+                }
+                properties = type.GetProperties(flags).Where(e => e.CanWrite).ToArray();
             }
             return properties;    
         }

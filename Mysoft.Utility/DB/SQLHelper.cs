@@ -223,15 +223,10 @@ namespace Mysoft.Utility
                     BatchSize = 10000
                 })
                 {
-                    //先取出表里面有的字段
-                    DataTable dtSrc = FillDataTable("SELECT * FROM "+srcTable+" WHERE 1=2");
-                    //取出数据库和实体里面都存在的列，为bulk添加映射
-                    foreach (DataColumn item in dtSrc.Columns)
+                    //循环所有列，为bulk添加映射
+                    foreach (DataColumn item in dataTable.Columns)
                     {
-                        if (dataTable.Columns.Contains(item.ColumnName))
-                        {
-                            bulk.ColumnMappings.Add(item.ColumnName, item.ColumnName);
-                        }
+                        bulk.ColumnMappings.Add(item.ColumnName, item.ColumnName);
                     }
                     bulk.WriteToServer(dataTable);
                     bulk.Close();

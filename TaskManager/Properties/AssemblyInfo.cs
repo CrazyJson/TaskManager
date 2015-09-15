@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("TaskManager")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("焰尾迭：http://yanweidie.cnblogs.com")]
+[assembly: AssemblyCompany("Microsoft")]
 [assembly: AssemblyProduct("TaskManager")]
-[assembly: AssemblyCopyright("Copyright © 焰尾迭 2015")]
+[assembly: AssemblyCopyright("Copyright © Microsoft 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

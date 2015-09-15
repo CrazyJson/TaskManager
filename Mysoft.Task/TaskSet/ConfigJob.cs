@@ -27,6 +27,7 @@ namespace Mysoft.Task.TaskSet
                 {
                     isRun = true;
                     LogHelper.WriteLog("Job修改任务开始,当前系统时间:" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                    LogHelper.WriteLog("Job修改任务执行前,系统当前的所有任务信息:" + JsonConvert.SerializeObject(TaskHelper.CurrentTaskList, Formatting.Indented));
                     ///获取所有执行中的任务
                     List<TaskUtil> listTask = TaskHelper.ReadConfig().Where(e => e.IsExcute).ToList<TaskUtil>();
                     //开始对比当前配置文件和上一次配置文件之间的改变
@@ -90,14 +91,7 @@ namespace Mysoft.Task.TaskSet
                             LogHelper.WriteLog(string.Format("任务“{0}”删除失败！", taskUtil.TaskName), e);
                         }
                     }
-                    if (UpdateJobList.Count > 0 || AddJobList.Count > 0 || DeleteJobList.Count > 0)
-                    {
-                        LogHelper.WriteLog("Job修改任务执行完成后,系统当前的所有任务信息:" + JsonConvert.SerializeObject(TaskHelper.CurrentTaskList));
-                    }
-                    else
-                    {
-                        LogHelper.WriteLog("当前没有修改的任务");
-                    }
+                    LogHelper.WriteLog("Job修改任务执行完成后,系统当前的所有任务信息:" + JsonConvert.SerializeObject(TaskHelper.CurrentTaskList, Formatting.Indented));
                     isRun = false;
                 }
             }

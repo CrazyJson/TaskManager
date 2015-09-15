@@ -39,7 +39,7 @@ namespace Mysoft.Utility
                     return;
                 }
                 Type type = typeof(SysConfig);
-                PropertyInfo[] Props = type.GetCanReadPropertyInfo(true);
+                PropertyInfo[] Props = type.GetCanWritePropertyInfo();
                 PathMap PathMap = null;
                 foreach (var prop in Props)
                 {

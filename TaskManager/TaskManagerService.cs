@@ -11,6 +11,13 @@ using System.Threading;
 
 namespace TaskManager
 {
+    /*
+     * 功能介绍： TaskManager是基于Quartz.NET的一款开源任务管理系统，
+     * 使用Window服务来承载。目前系统集成了四个常用任务，代理IP爬虫，快递进度，消息通知，动态修改Job任务
+     * 
+     * 作者：焰尾迭
+     * 博客地址：http://www.cnblogs.com/yanweidie/p/3564062.html
+     */
     public partial class TaskManagerService : ServiceBase
     {
         public TaskManagerService()

@@ -29,7 +29,7 @@ namespace Mysoft.Task.TaskSet
                     LogHelper.WriteLog("\r\n\r\n\r\n\r\n------------------发送信息任务开始执行 " + start.ToString("yyyy-MM-dd HH:mm:ss") + " BEGIN-----------------------------\r\n\r\n");
 
                     //取出所有当前待发送的消息
-                    List<Message> listWait = SQLHelper.ToList<Message>(strSQL);
+                    List<Message> listWait = SQLHelper.ToList<Message>(strSQL2);
                     bool isSucess = false;
                     if (listWait == null || listWait.Count == 0)
                     {
@@ -89,5 +89,10 @@ namespace Mysoft.Task.TaskSet
 	            WHERE   DATEDIFF(MINUTE, CreatedOn, GETDATE()) > 3
             )AS A
             WHERE A.RowNum=1";
+
+        /// <summary>
+        /// 取出p_Message表里面所有数据进行发送
+        /// </summary>
+        private static readonly string strSQL2 = @"SELECT MessageGuid,Receiver,Content,Subject,Type,CreatedOn FROM dbo.p_Message ";
     }
 }

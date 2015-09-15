@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("CronExpressionWeb")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("焰尾迭：http://yanweidie.cnblogs.com")]
 [assembly: AssemblyProduct("CronExpressionWeb")]
 [assembly: AssemblyCopyright("版权所有(C)  2015")]
 [assembly: AssemblyTrademark("")]

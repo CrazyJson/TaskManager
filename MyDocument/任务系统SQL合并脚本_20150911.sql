@@ -479,3 +479,43 @@ BEGIN
 	6：退回，货物正处于退回发件人的途中;)' ,'user', @CurrentUser, 'table', 'p_ExpressProcessDetail', 'column', 'State'
 END
 GO
+
+GO
+IF NOT EXISTS(SELECT 1 FROM syscolumns WHERE id=OBJECT_ID('[p_Message]') AND name='FromType')
+BEGIN
+	ALTER TABLE [dbo].[p_Message] ADD FromType NVARCHAR(200)   	
+	declare @CurrentUser sysname
+	select @CurrentUser = user_name()
+	execute sp_addextendedproperty 'MS_Description',  '消息来源(eg:快递进度)' ,'user', @CurrentUser, 'table', 'p_Message', 'column', 'FromType'
+END
+GO
+
+GO
+IF NOT EXISTS(SELECT 1 FROM syscolumns WHERE id=OBJECT_ID('[p_Message]') AND name='FkGUID')
+BEGIN
+	ALTER TABLE [dbo].[p_Message] ADD FkGUID uniqueidentifier   	
+	declare @CurrentUser sysname
+	select @CurrentUser = user_name()
+	execute sp_addextendedproperty 'MS_Description',  '消息来源GUID' ,'user', @CurrentUser, 'table', 'p_Message', 'column', 'FkGUID'
+END
+GO
+
+GO
+IF NOT EXISTS(SELECT 1 FROM syscolumns WHERE id=OBJECT_ID('[p_MessageHistory]') AND name='FromType')
+BEGIN
+	ALTER TABLE [dbo].[p_MessageHistory] ADD FromType NVARCHAR(200)   	
+	declare @CurrentUser sysname
+	select @CurrentUser = user_name()
+	execute sp_addextendedproperty 'MS_Description',  '消息来源(eg:快递进度)' ,'user', @CurrentUser, 'table', 'p_MessageHistory', 'column', 'FromType'
+END
+GO
+
+GO
+IF NOT EXISTS(SELECT 1 FROM syscolumns WHERE id=OBJECT_ID('[p_MessageHistory]') AND name='FkGUID')
+BEGIN
+	ALTER TABLE [dbo].[p_MessageHistory] ADD FkGUID uniqueidentifier   	
+	declare @CurrentUser sysname
+	select @CurrentUser = user_name()
+	execute sp_addextendedproperty 'MS_Description',  '消息来源GUID' ,'user', @CurrentUser, 'table', 'p_MessageHistory', 'column', 'FkGUID'
+END
+GO

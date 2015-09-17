@@ -101,10 +101,13 @@ namespace Mysoft.Task.Utils
                 JToken value = null;
 
                 //快递单当前的状态
-                string state = string.Empty;
+                int state=-1;
                 if (jo.TryGetValue("state", out value))
                 {
-                    state = value.ToString();
+                    if (!Int32.TryParse(value.ToString(), out state))
+                    {
+                        return false;
+                    }
                 }
 
                 //查询结果状态 
@@ -123,7 +126,7 @@ namespace Mysoft.Task.Utils
                         {
                             return false;
                         }
-                        if (state.Equals("3") || state.Equals("4") || state.Equals("6"))
+                        if (state==3 || state==4 || state==6)
                         {
                             //3：签收，收件人已签收；4：退签，即货物由于用户拒签、超区等原因退回，而且发件人已经签收；
                             //6：退回，货物正处于退回发件人的途中；
@@ -145,14 +148,17 @@ namespace Mysoft.Task.Utils
                                     item = list[i];
                                     item.ExpressNo = ExpressNo;
                                     item.GroupNo = i + 1;
+                                    //相对准确，但不是完全准确的一个状态
+                                    item.State = GetExpressDetailState(item,maxGroupNo==0 && i==0);
                                 }
 
 
                                 //产生了新的快递进度信息,准备发送短信通知
                                 if (length > maxGroupNo)
                                 {
+                                    var saveList=list.Where(e => e.GroupNo > maxGroupNo).ToList();
                                     //保存新的进度信息
-                                    SQLHelper.BatchSaveData(list.Where(e => e.GroupNo > maxGroupNo).ToList(), "p_ExpressProcessDetail");
+                                    SQLHelper.BatchSaveData(saveList, "p_ExpressProcessDetail");
                                     //插入短信通知，等待任务轮训时发送短信
                                     var lastDetail = list[length - 1];
                                     string[] Receivers = ExpressInfo.Receiver.Split(new char[] { ',' });
@@ -167,17 +173,36 @@ namespace Mysoft.Task.Utils
                                         }
                                         else if (RegexHelper.IsEmail(Receiver))
                                         {
-                                            Hashtable ht = new Hashtable();
-                                            List<ExpressCompany> listExpressCompany = GetAllExpressCompany();
-                                            string ExpressCompany=listExpressCompany.FirstOrDefault(e => e.CompanyCode == ExpressInfo.ExpressCompanyCode).CompanyName;
-                                            ht["TotalTime"] = lastDetail.Time.GetDayAndHours(list[0].Time);
-                                            ht["T"] = list;
-                                            ht["V"] = ExpressInfo;
-                                            ht["ExpressCompany"] = ExpressCompany;
-                                            ht["Status"] = state;
-                                            string content = FileGen.GetFileText(FileHelper.GetAbsolutePath("Temples/ExpressDetail.vm"), ht).ToString();
-                                            //添加邮件消息提醒
-                                            MessageHelper.AddMessage(Receiver, content, "快递进度变更", MessageType.EMAIL);
+                                            bool isAddMessage = false;
+                                            //修改消息添加规则,有变更就添加可能一天收很多邮件,让人厌烦
+                                            //现在规则修改为快递状态为1:揽件 3:签收 5:派件 这几种状态必发
+                                            //然后每天其它状态的最多发送一条     
+                                            var importantDetail = saveList.Where(e => e.State == 1 || e.State == 3 || e.State == 5);
+                                            if ( importantDetail!= null && importantDetail.Count()>0)
+                                            {
+                                                isAddMessage = true;
+                                            }
+                                            else
+                                            {
+                                                if (!HasSendMessage(ExpressInfo.ExpressGUID))
+                                                {
+                                                    isAddMessage = true;
+                                                }
+                                            }
+                                            if (isAddMessage)
+                                            {
+                                                Hashtable ht = new Hashtable();
+                                                List<ExpressCompany> listExpressCompany = GetAllExpressCompany();
+                                                string ExpressCompany = listExpressCompany.FirstOrDefault(e => e.CompanyCode == ExpressInfo.ExpressCompanyCode).CompanyName;
+                                                ht["TotalTime"] = lastDetail.Time.GetDayAndHours(list[0].Time);
+                                                ht["T"] = list;
+                                                ht["V"] = ExpressInfo;
+                                                ht["ExpressCompany"] = ExpressCompany;
+                                                ht["Status"] = state;
+                                                string content = FileGen.GetFileText(FileHelper.GetAbsolutePath("Temples/ExpressDetail.vm"), ht).ToString();
+                                                //添加邮件消息提醒
+                                                MessageHelper.AddMessage(Receiver, content, "快递进度变更", "快递进度", ExpressInfo.ExpressGUID, MessageType.EMAIL);
+                                            }
                                         }
                                     }
 
@@ -196,11 +221,54 @@ namespace Mysoft.Task.Utils
         }
 
         /// <summary>
+        /// 判断今天是否已经已经发送过邮件提醒
+        /// </summary>
+        /// <param name="ExpressGUID">快递单GUID</param>
+        /// <returns>bool</returns>
+        private static bool HasSendMessage(Guid ExpressGUID)
+        {
+            string strsQL = @"SELECT SUM(Total) 
+                    FROM (        
+	                    SELECT COUNT(1) AS Total FROM dbo.p_Message  WHERE Type=1 AND FromType='快递进度' AND DATEDIFF(DAY,CreatedOn,GETDATE())=0 AND FkGUID=@FkGUID
+	                    UNION ALL       
+	                    SELECT COUNT(1) AS Total FROM dbo.p_MessageHistory WHERE Type=1 AND FromType='快递进度' AND DATEDIFF(DAY,SendOn,GETDATE())=0 AND FkGUID=@FkGUID
+                    )AS A";
+            return SQLHelper.ExecuteScalar<int>(strsQL, new { FkGUID = ExpressGUID }) > 0;
+        }
+
+        /// <summary>
+        /// 计算快递进度明细对应的状态
+        /// </summary>
+        /// <param name="info">快递进度信息</param>
+        /// <param name="isFirst">是否第一条进度信息 如果为第一条则状态为1(揽件，货物已由快递公司揽收并且产生了第一条跟踪信息)</param>
+        /// <returns>快递状态</returns>
+        private static int GetExpressDetailState(ExpressProcessDetail info, bool isFirst = false)
+        {
+            int State = 0;
+            if (isFirst)
+            {
+                State = 1;
+            }
+            else
+            {
+                if (info.Context.Contains("派件人"))
+                {
+                    State = 5;
+                }
+                else if (info.Context.Contains("签收人"))
+                {
+                    State = 3;
+                }
+            }
+            return State;
+        }
+
+        /// <summary>
         /// 保存快递单历史信息
         /// </summary>
         /// <param name="ExpressNo">快递单号</param>
         /// <param name="state">快递最终状态</param>
-        private static void SaveExpressHistoryInfo(string ExpressNo, string state)
+        private static void SaveExpressHistoryInfo(string ExpressNo, int state)
         {
             SQLHelper.ExecuteNonQuery(@"INSERT INTO dbo.p_ExpressHistoryInfo(ExpressGUID,ExpressNo,ExpressCompanyCode,Receiver,State,CreatedOn)
                 SELECT  ExpressGUID ,ExpressNo ,ExpressCompanyCode ,Receiver ,@State,CreatedOn FROM dbo.p_ExpressInfo WHERE ExpressNo=@ExpressNo;
@@ -399,6 +467,15 @@ namespace Mysoft.Task.Utils
         ///每条跟综信息的描述
         /// </summary>
         public string Context
+        {
+            get;
+            set;
+        }
+
+        ///<summary>
+        ///当前进度所对应快递状态
+        /// </summary>
+        public int State
         {
             get;
             set;

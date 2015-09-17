@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // 特性集控制。更改这些特性值可修改
 // 与程序集关联的信息。
 [assembly: AssemblyTitle("Mysoft.Utility")]
-[assembly: AssemblyDescription("开发工具集合")]
+[assembly: AssemblyDescription("开发帮助库")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("china")]
+[assembly: AssemblyCompany("焰尾迭：http://yanweidie.cnblogs.com")]
 [assembly: AssemblyProduct("Mysoft.Utility")]
-[assembly: AssemblyCopyright("Copyright © china 2015")]
+[assembly: AssemblyCopyright("Copyright © 焰尾迭 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = @"log4net.config", Watch = true)]

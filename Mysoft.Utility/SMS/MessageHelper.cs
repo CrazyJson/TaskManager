@@ -20,7 +20,9 @@ namespace Mysoft.Utility
         /// <param name="Content">内容</param>
         /// <param name="Subject">邮件主题</param>
         /// <param name="Type">消息类型</param>
-        public static int AddMessage(string Receiver, string Content, string Subject, MessageType Type = MessageType.SMS)
+        /// <param name="FromType">消息来源类型</param>
+        /// <param name="FkGUID">消息来源GUID</param>
+        public static int AddMessage(string Receiver, string Content, string Subject,string FromType,Guid FkGUID, MessageType Type = MessageType.SMS)
         {
             if (string.IsNullOrEmpty("Receiver") || string.IsNullOrEmpty("Content"))
             {
@@ -31,9 +33,9 @@ namespace Mysoft.Utility
             StringBuilder sb = new StringBuilder();
             foreach (var item in Receivers)
             {
-                sb.AppendFormat(@"INSERT INTO dbo.p_Message(Receiver,Content,Subject,Type) SELECT '{0}',@Content,@Subject,@Type;", item);
+                sb.AppendFormat(@"INSERT INTO dbo.p_Message(Receiver,Content,Subject,Type,FromType,FkGUID) SELECT '{0}',@Content,@Subject,@Type,@FromType,@FkGUID;", item);
             }
-            return SQLHelper.ExecuteNonQuery(sb.ToString(), new { Content = Content,Subject=Subject,Type = EnumHelper.EnumToInt<MessageType>(Type) });
+            return SQLHelper.ExecuteNonQuery(sb.ToString(), new { Content = Content, Subject = Subject, FromType = FromType, FkGUID = FkGUID,Type = EnumHelper.EnumToInt<MessageType>(Type) });
         }
 
         /// <summary>
@@ -89,8 +91,8 @@ namespace Mysoft.Utility
         public static void RemoveMessage(Guid MessageGuid, string remark)
         {
             int Staue = string.IsNullOrEmpty(remark) ? 0 : 1;
-            string strSQL = @"INSERT INTO dbo.p_MessageHistory(MessageGuid,Receiver,Type,Content,Subject,CreatedOn,Staue,Remark)
-            SELECT  MessageGuid,Receiver,Type,Content,Subject,CreatedOn,@Staue,@Remark FROM dbo.p_Message WHERE MessageGuid=@MessageGuid;
+            string strSQL = @"INSERT INTO dbo.p_MessageHistory(MessageGuid,Receiver,Type,Content,Subject,FromType,FkGUID,CreatedOn,Staue,Remark)
+            SELECT  MessageGuid,Receiver,Type,Content,Subject,FromType,FkGUID,CreatedOn,@Staue,@Remark FROM dbo.p_Message WHERE MessageGuid=@MessageGuid;
             DELETE FROM dbo.p_Message WHERE MessageGuid=@MessageGuid;";
             SQLHelper.ExecuteNonQuery(strSQL, new { MessageGuid = MessageGuid, Staue = Staue, Remark = remark });
         }
@@ -140,6 +142,16 @@ namespace Mysoft.Utility
         /// 消息创建日期
         /// </summary>
         public DateTime CreatedOn { get; set; }
+
+        /// <summary>
+        /// 消息来源类型
+        /// </summary>
+        public string FromType { get; set; }
+
+        /// <summary>
+        /// 消息来源GUID
+        /// </summary>
+        public Guid FkGUID { get; set; }
     }
 
     /// <summary>

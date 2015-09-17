@@ -462,3 +462,60 @@ execute sp_addextendedproperty 'MS_Description',  '备注' ,'user', @CurrentUser, 
 
 END
 GO
+
+GO
+IF NOT EXISTS(SELECT 1 FROM syscolumns WHERE id=OBJECT_ID('[p_ExpressProcessDetail]') AND name='State')
+BEGIN
+	ALTER TABLE [dbo].[p_ExpressProcessDetail] ADD State TINYINT   	
+	declare @CurrentUser sysname
+	select @CurrentUser = user_name()
+	execute sp_addextendedproperty 'MS_Description',  '快递单当前的状态(
+	0：在途，即货物处于运输过程中；
+	1：揽件，货物已由快递公司揽收并且产生了第一条跟踪信息；
+	2：疑难，货物寄送过程出了问题；
+	3：签收，收件人已签收；
+	4：退签，即货物由于用户拒签、超区等原因退回，而且发件人已经签收；
+	5：派件，即快递正在进行同城派件；
+	6：退回，货物正处于退回发件人的途中;)' ,'user', @CurrentUser, 'table', 'p_ExpressProcessDetail', 'column', 'State'
+END
+GO
+
+GO
+IF NOT EXISTS(SELECT 1 FROM syscolumns WHERE id=OBJECT_ID('[p_Message]') AND name='FromType')
+BEGIN
+	ALTER TABLE [dbo].[p_Message] ADD FromType NVARCHAR(200)   	
+	declare @CurrentUser sysname
+	select @CurrentUser = user_name()
+	execute sp_addextendedproperty 'MS_Description',  '消息来源(eg:快递进度)' ,'user', @CurrentUser, 'table', 'p_Message', 'column', 'FromType'
+END
+GO
+
+GO
+IF NOT EXISTS(SELECT 1 FROM syscolumns WHERE id=OBJECT_ID('[p_Message]') AND name='FkGUID')
+BEGIN
+	ALTER TABLE [dbo].[p_Message] ADD FkGUID uniqueidentifier   	
+	declare @CurrentUser sysname
+	select @CurrentUser = user_name()
+	execute sp_addextendedproperty 'MS_Description',  '消息来源GUID' ,'user', @CurrentUser, 'table', 'p_Message', 'column', 'FkGUID'
+END
+GO
+
+GO
+IF NOT EXISTS(SELECT 1 FROM syscolumns WHERE id=OBJECT_ID('[p_MessageHistory]') AND name='FromType')
+BEGIN
+	ALTER TABLE [dbo].[p_MessageHistory] ADD FromType NVARCHAR(200)   	
+	declare @CurrentUser sysname
+	select @CurrentUser = user_name()
+	execute sp_addextendedproperty 'MS_Description',  '消息来源(eg:快递进度)' ,'user', @CurrentUser, 'table', 'p_MessageHistory', 'column', 'FromType'
+END
+GO
+
+GO
+IF NOT EXISTS(SELECT 1 FROM syscolumns WHERE id=OBJECT_ID('[p_MessageHistory]') AND name='FkGUID')
+BEGIN
+	ALTER TABLE [dbo].[p_MessageHistory] ADD FkGUID uniqueidentifier   	
+	declare @CurrentUser sysname
+	select @CurrentUser = user_name()
+	execute sp_addextendedproperty 'MS_Description',  '消息来源GUID' ,'user', @CurrentUser, 'table', 'p_MessageHistory', 'column', 'FkGUID'
+END
+GO

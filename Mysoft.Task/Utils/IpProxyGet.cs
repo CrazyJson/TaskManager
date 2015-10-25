@@ -1,5 +1,6 @@
 ﻿using CsharpHttpHelper;
 using HtmlAgilityPack;
+using Mysoft.Task.Utils;
 using Mysoft.Utility;
 using System;
 using System.Collections;
@@ -91,7 +92,7 @@ namespace Mysoft.Task
             }
             if (list.Count == 0)
             {
-                LogHelper.WriteLog("爬虫-代理ip任务", new Exception("没有获取到数据,可能当前ip(" + Param.ProxyIp + ")已被服务器封锁"));
+                TaskLog.IpProxyLogInfo.WriteLogE("爬虫-代理ip任务", new Exception("没有获取到数据,可能当前ip(" + Param.ProxyIp + ")已被服务器封锁"));
             }
             else
             {
@@ -122,7 +123,7 @@ namespace Mysoft.Task
             HtmlAttribute atr = null;
             for (int i = start; i <= end; i++)
             {
-                LogHelper.WriteLog(string.Format("开始解析,页码{0}~{1},当前页码{2}", start, end, i));
+                TaskLog.IpProxyLogInfo.WriteLogE(string.Format("开始解析,页码{0}~{1},当前页码{2}", start, end, i));
                 url = string.Format("{0}/{1}", Param.IPUrl, i);
                 var doc = new HtmlDocument();
                 doc.LoadHtml(GetHTML(url, Param.ProxyIp));
@@ -130,7 +131,7 @@ namespace Mysoft.Task
                 var trs = doc.DocumentNode.SelectNodes(@"//table[@id='ip_list']/tr");
                 if (trs != null && trs.Count > 1)
                 {
-                    LogHelper.WriteLog(string.Format("当前页码{0},请求地址{1},共{2}条数据", i, url, trs.Count));
+                    TaskLog.IpProxyLogInfo.WriteLogE(string.Format("当前页码{0},请求地址{1},共{2}条数据", i, url, trs.Count));
                     for (int j = 1; j < trs.Count; j++)
                     {
                         nodes = trs[j].SelectNodes("td");
@@ -184,9 +185,9 @@ namespace Mysoft.Task
                             list.Add(item);
                         }
                     }
-                    LogHelper.WriteLog(string.Format("当前页码{0},共{1}条数据", i, trs.Count));
+                    TaskLog.IpProxyLogInfo.WriteLogE(string.Format("当前页码{0},共{1}条数据", i, trs.Count));
                 }
-                LogHelper.WriteLog(string.Format("结束解析,页码{0}~{1},当前页码{2}", start, end, i));
+                TaskLog.IpProxyLogInfo.WriteLogE(string.Format("结束解析,页码{0}~{1},当前页码{2}", start, end, i));
             }
         }
 
@@ -233,7 +234,7 @@ namespace Mysoft.Task
             }
             catch (Exception ex)
             {
-                LogHelper.WriteLog(string.Format("url:{0},ip:{1}获取HTML内容出错", url, ProxyIp), ex);
+                TaskLog.IpProxyLogError.WriteLogE(string.Format("url:{0},ip:{1}获取HTML内容出错", url, ProxyIp), ex);
                 return "<HTML></HTML>";
             }
         }
@@ -305,7 +306,7 @@ namespace Mysoft.Task
                 foreach (DataRow dr in dt.Rows)
                 {
                     tempProxyIp = GetIP(dr["IP"].ToString(), dr["Port"].ToString());
-                    LogHelper.WriteLog("当前IP:" + tempProxyIp);
+                    TaskLog.IpProxyLogInfo.WriteLogE("当前IP:" + tempProxyIp);
                     if (Ping(dr["IP"].ToString()) && GetTotalPage(Param.IPUrl, tempProxyIp) > 1)
                     {
                         ProxyIp = tempProxyIp;

@@ -67,21 +67,21 @@ namespace Mysoft.Task.Utils
                     html = GetHTML(url, ProxyIp);
                     if (html == null)
                     {
-                        LogHelper.WriteLog(string.Format("url:{0},ip:{1}获取快递进度内容出错", url, ProxyIp));
+                        TaskLog.ExpressProgressLogInfo.WriteLogE(string.Format("url:{0},ip:{1}获取快递进度内容出错", url, ProxyIp));
                         continue;
                     }
-                    LogHelper.WriteLog(string.Format("开始查询快递单号{0}进度信息", ExpressInfo.ExpressNo));
+                    TaskLog.ExpressProgressLogInfo.WriteLogE(string.Format("开始查询快递单号{0}进度信息", ExpressInfo.ExpressNo));
                     if (ParseExpressInfo(html, ExpressInfo))
                     {
                         SuccessCount++;
-                        LogHelper.WriteLog(string.Format("结束快递单号{0}进度信息查询", ExpressInfo.ExpressNo));
+                        TaskLog.ExpressProgressLogInfo.WriteLogE(string.Format("结束快递单号{0}进度信息查询", ExpressInfo.ExpressNo));
                     }
                     //等待10s再次查询其它单号信息,避免间隔太小ip被封
                     Thread.Sleep(10000);
                 }
                 catch (Exception ex)
                 {
-                    LogHelper.WriteLog(string.Format("url:{0},ip:{1}获取快递进度内容出错", url, ProxyIp), ex);
+                    TaskLog.ExpressProgressLogError.WriteLogE(string.Format("url:{0},ip:{1}获取快递进度内容出错", url, ProxyIp), ex);
                 }
             }
             return SuccessCount == listExpressInfo.Count;
@@ -204,8 +204,11 @@ namespace Mysoft.Task.Utils
                                                 MessageHelper.AddMessage(Receiver, content, "快递进度变更", "快递进度", ExpressInfo.ExpressGUID, MessageType.EMAIL);
                                             }
                                         }
+                                        else
+                                        {
+                                            TaskLog.ExpressProgressLogInfo.WriteLogE(string.Format("快递单号“{0}”的接收人“{1}”无法识别,不为邮件/手机号任何一种，请检查！", ExpressInfo.ExpressNo, ExpressInfo.Receiver));
+                                        }
                                     }
-
                                 }
                             }
                         }
@@ -349,7 +352,7 @@ namespace Mysoft.Task.Utils
                 foreach (DataRow dr in dt.Rows)
                 {
                     tempProxyIp = dr["IP"].ToString() + ":" + dr["Port"].ToString();
-                    LogHelper.WriteLog("当前IP:" + tempProxyIp);
+                    TaskLog.ExpressProgressLogInfo.WriteLogE("当前IP:" + tempProxyIp);
                     if (Ping(dr["IP"].ToString()) && GetHTML(url, tempProxyIp) != null)
                     {
                         ProxyIp = tempProxyIp;

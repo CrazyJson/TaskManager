@@ -83,7 +83,13 @@ function workDay(dom) {
 	item.change();
 }
 
-$(function() {
+$(function () {
+    var arrSpecial = ["?", "*"];
+    //日索引位置
+    var DayOfMonth = 3;
+    //周索引位置
+    var DayofWeek = 5;
+
 	$(".numberspinner").numberspinner({
 		onChange:function(){
 			$(this).closest("div.line").children().eq(0).click();
@@ -107,13 +113,28 @@ $(function() {
 		    }
 
 		});
-        //当前选中项之前的如果为*，则都设置成0
-		for (var i = currentIndex; i >= 1; i--) {
-		    if (item[i] != "*" && item[i - 1] == "*") {
-		        item[i - 1] = "0";
+	    //表达式需要遵守的几个规则
+
+	    //规则一:当前选中项从日开始算起之前的如果为*，则都设置成0
+	    //规则二:日和周不能同时为?或者同时为*,如果其中一个有值另外一个必须设置成?
+	    //规则三:当前选中项之后的如果不为*,则都设置成*
+
+	    //规则一实现
+		if (item[currentIndex] != "*") {
+		    var startIndex = currentIndex >= 4 ? 4 : currentIndex;
+		    for (var i = 0; i < startIndex; i++) {
+		        if (item[i] == "*") {
+		            if (i < 3) {
+		                item[i] = "0";
+		            } else {
+		                item[i] = "1";
+		            }
+		        }
 		    }
 		}
-	    //当前选中项之后的如果不为*则都设置成*
+		
+
+	    //规则三实现
 		if (item[currentIndex] == "*") {
 		    for (var i = currentIndex + 1; i < item.length; i++) {
 		        if (i == 5) {
@@ -123,6 +144,40 @@ $(function() {
 		        }
 		    }
 		}
+
+	    //规则二实现
+		if (currentIndex == DayOfMonth || currentIndex == DayofWeek) {
+
+		    var indexDaySpecial = $.inArray(item[DayOfMonth], arrSpecial);
+		    var indexWeekSpecial = $.inArray(item[DayofWeek], arrSpecial);
+
+		    if (currentIndex == DayOfMonth) {
+		        if (indexDaySpecial < 0) {
+		            item[DayofWeek] = "?";
+		        } else if (indexDaySpecial == 0) {
+		            if (indexWeekSpecial == 0) {
+		                item[DayofWeek] = "*";
+		            }
+		        } else {
+		            if (indexWeekSpecial == 1) {
+		                item[DayofWeek] = "?";
+		            }
+		        }
+		    } else {
+		        if (indexWeekSpecial < 0) {
+		            item[DayOfMonth] = "?";
+		        } else if (indexWeekSpecial == 0) {
+		            if (indexDaySpecial == 0) {
+		                item[DayOfMonth] = "*";
+		            }
+		        } else {
+		            if (indexDaySpecial == 1) {
+		                item[DayOfMonth] = "?";
+		            }
+		        }
+		    }
+		}
+
 		cron.val(item.join(" ")).change();
 	});
 

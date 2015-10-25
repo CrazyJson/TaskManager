@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -19,10 +20,13 @@ namespace Mysoft.Test
         {
             ConfigInit.InitConfig();
             //ParseExpressCode();
-            //ExpressUtil.HandleProecssInfo(ExpressUtil.GetCorrectIP(""));
+            //ExpressUtil.HandleProecssInfo("");
             //MessageHelper.SendMessage(new Guid("6282AA73-2A58-E511-8D70-00155D0C740D"));
             //new Mysoft.Task.TaskSet.SendMessageJob().Execute(null);
+            Console.Read();
         }
+
+
 
         /// <summary>
         /// 代理使用示例
@@ -30,19 +34,19 @@ namespace Mysoft.Test
         /// <param name="Url"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static string GetUrltoHtml(string Url, string type)
+        public static string GetUrltoHtml(string Url, string type="UTF-8")
         {
             try
             {
-                System.Net.WebRequest wReq = System.Net.WebRequest.Create(Url);
-
+                var request = (HttpWebRequest)WebRequest.Create(Url);
+                request.UserAgent = "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)";
                 WebProxy myProxy = new WebProxy("192.168.15.11", 8015);
                 //建议连接（代理需要身份认证，才需要用户名密码）
                 myProxy.Credentials = new NetworkCredential("admin", "123456");
                 //设置请求使用代理信息
-                wReq.Proxy = myProxy;
+                request.Proxy = myProxy;
                 // Get the response instance.
-                System.Net.WebResponse wResp = wReq.GetResponse();
+                System.Net.WebResponse wResp = request.GetResponse();
                 System.IO.Stream respStream = wResp.GetResponseStream();
                 // Dim reader As StreamReader = New StreamReader(respStream)
                 using (System.IO.StreamReader reader = new System.IO.StreamReader(respStream, Encoding.GetEncoding(type)))
@@ -50,7 +54,7 @@ namespace Mysoft.Test
                     return reader.ReadToEnd();
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception)
             {
                 //errorMsg = ex.Message;
             }

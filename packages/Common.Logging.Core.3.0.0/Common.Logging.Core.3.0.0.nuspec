@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Common.Logging.Core</id>
+    <version>3.0.0</version>
+    <authors>Aleksandar Seovic,  Mark Pollack,  Erich Eichinger,  Stephen Bohlen</authors>
+    <owners>Aleksandar Seovic,  Mark Pollack,  Erich Eichinger,  Stephen Bohlen</owners>
+    <projectUrl>http://netcommon.sourceforge.net/</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/net-commons/common-logging/master/nuget-graphics/common-logging-icon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Common.Logging.Core contains the portable (PCL) implementation of the Common.Logging low-level abstractions common to all other Common.Logging packages.</description>
+    <language>en-US</language>
+    <tags>PCL Common.Logging.Portable Common.Logging.Core logging log Common.Logging</tags>
+    <references>
+      <reference file="Common.Logging.Core.dll" />
+    </references>
+  </metadata>
+</package>

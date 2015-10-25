@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Quartz</id>
+    <version>2.3.3</version>
+    <title>Quartz.NET</title>
+    <authors>Marko Lahma</authors>
+    <owners>Marko Lahma</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <projectUrl>http://www.quartz-scheduler.net/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Quartz.NET Scheduling Framework for .NET Platform</description>
+    <releaseNotes>This is a minor release containing mostly bug fixes.
+
+NEW FEATURE
+
+* Support generic job types with AdoJobStore
+
+FIXES
+
+* AdoJobStore doesn't notify about removing orphaned job
+* Store null JobData in JobDetails if it's empty
+* Documentation error in SimpleTriggerImpl UpdateAfterMisfire
+* Ensure IDriverDelegate members in StdAdoDelegate are virtual</releaseNotes>
+    <language>en-US</language>
+    <dependencies>
+      <dependency id="Common.Logging" version="3.0.0" />
+    </dependencies>
+    <references>
+      <reference file="Quartz.dll" />
+    </references>
+  </metadata>
+</package>

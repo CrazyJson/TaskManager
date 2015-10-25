@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>EnyimMemcached</id>
+    <version>2.13</version>
+    <title>EnyimMemcached</title>
+    <authors>Attila Kiskó</authors>
+    <owners>Attila Kiskó</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <projectUrl>https://github.com/enyim/EnyimMemcached</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Memcached client library for .NET based languages.</description>
+    <releaseNotes>https://github.com/enyim/EnyimMemcached/compare/emc2.12...emc2.13</releaseNotes>
+    <tags>memcached enyim cache caching</tags>
+    <references>
+      <reference file="Enyim.Caching.dll" />
+    </references>
+  </metadata>
+</package>

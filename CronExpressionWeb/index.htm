@@ -39,10 +39,10 @@
                         <div class="line">
                             <input type="radio" name="second" onclick="cycle(this)">
                             周期从
-                            <input class="numberspinner" style="width: 60px;" data-options="min:1,max:58" value="1"
+                            <input class="numberspinner" style="width: 60px;" data-options="min:0,max:59" value="0"
                                 id="secondStart_0">
                             -
-                            <input class="numberspinner" style="width: 60px;" data-options="min:2,max:59" value="2"
+                            <input class="numberspinner" style="width: 60px;" data-options="min:0,max:59" value="0"
                                 id="secondEnd_0">
                             秒</div>
                         <div class="line">
@@ -137,10 +137,10 @@
                         <div class="line">
                             <input type="radio" name="min" onclick="cycle(this)">
                             周期从
-                            <input class="numberspinner" style="width: 60px;" data-options="min:1,max:58" value="1"
+                            <input class="numberspinner" style="width: 60px;" data-options="min:0,max:59" value="0"
                                 id="minStart_0">
                             -
-                            <input class="numberspinner" style="width: 60px;" data-options="min:2,max:59" value="2"
+                            <input class="numberspinner" style="width: 60px;" data-options="min:0,max:59" value="0"
                                 id="minEnd_0">
                             分钟</div>
                         <div class="line">
@@ -238,7 +238,7 @@
                             <input class="numberspinner" style="width: 60px;" data-options="min:0,max:23" value="0"
                                 id="hourStart_0">
                             -
-                            <input class="numberspinner" style="width: 60px;" data-options="min:2,max:23" value="2"
+                            <input class="numberspinner" style="width: 60px;" data-options="min:0,max:23" value="0"
                                 id="hourEnd_1">
                             小时</div>
                         <div class="line">
@@ -297,7 +297,7 @@
                             <input class="numberspinner" style="width: 60px;" data-options="min:1,max:31" value="1"
                                 id="dayStart_0">
                             -
-                            <input class="numberspinner" style="width: 60px;" data-options="min:2,max:31" value="2"
+                            <input class="numberspinner" style="width: 60px;" data-options="min:1,max:31" value="1"
                                 id="dayEnd_0">
                             日</div>
                         <div class="line">
@@ -362,15 +362,12 @@
                             <input type="radio" checked="checked" name="mouth" onclick="everyTime(this)">
                             月 允许的通配符[, - * /]</div>
                         <div class="line">
-                            <input type="radio" name="mouth" onclick="unAppoint(this)">
-                            不指定</div>
-                        <div class="line">
                             <input type="radio" name="mouth" onclick="cycle(this)">
                             周期从
                             <input class="numberspinner" style="width: 60px;" data-options="min:1,max:12" value="1"
                                 id="mouthStart_0">
                             -
-                            <input class="numberspinner" style="width: 60px;" data-options="min:2,max:12" value="2"
+                            <input class="numberspinner" style="width: 60px;" data-options="min:1,max:12" value="1"
                                 id="mouthEnd_0">
                             月</div>
                         <div class="line">
@@ -402,17 +399,17 @@
                     </div>
                     <div title="周">
                         <div class="line">
-                            <input type="radio" checked="checked" name="week" onclick="everyTime(this)">
+                            <input type="radio" name="week" onclick="everyTime(this)">
                             周 允许的通配符[, - * / L #]</div>
                         <div class="line">
-                            <input type="radio" name="week" onclick="unAppoint(this)">
+                            <input type="radio" checked="checked" name="week" onclick="unAppoint(this)">
                             不指定</div>
                         <div class="line">
                             <input type="radio" name="week" onclick="startOn(this)">
                             周期 从星期<input class="numberspinner" style="width: 60px;" data-options="min:1,max:7"
                                 id="weekStart_0" value="1">
                             -
-                            <input class="numberspinner" style="width: 60px;" data-options="min:2,max:7" value="2"
+                            <input class="numberspinner" style="width: 60px;" data-options="min:1,max:7" value="1"
                                 id="weekEnd_0"></div>
                         <div class="line">
                             <input type="radio" name="week" onclick="weekOfDay(this)">

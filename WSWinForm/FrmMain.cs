@@ -247,7 +247,7 @@ namespace WSWinForm
                 //让主线程去访问设置提示信息
                 if (mBackgroundWorker.IsBusy)
                 {
-                    MessageBox.Show("当前进程正在生成脚本，请等待本次操作完成！");
+                    MessageBox.Show("当前进程正在卸载服务，请等待本次操作完成！");
                     return;
                 }
                 //后台运行卸载服务

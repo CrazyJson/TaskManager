@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Common.Logging</id>
+    <version>3.0.0</version>
+    <authors>Aleksandar Seovic,  Mark Pollack,  Erich Eichinger,  Stephen Bohlen</authors>
+    <owners>Aleksandar Seovic,  Mark Pollack,  Erich Eichinger,  Stephen Bohlen</owners>
+    <projectUrl>http://netcommon.sourceforge.net/</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/net-commons/common-logging/master/nuget-graphics/common-logging-icon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Common.Logging library introduces a simple abstraction to allow you to select a specific logging implementation at runtime.</description>
+    <language>en-US</language>
+    <tags>logging log Common.Logging</tags>
+    <dependencies>
+      <dependency id="Common.Logging.Core" version="3.0.0" />
+    </dependencies>
+    <references>
+      <reference file="Common.Logging.dll" />
+    </references>
+  </metadata>
+</package>

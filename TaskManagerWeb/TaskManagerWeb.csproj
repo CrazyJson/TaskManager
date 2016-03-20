@@ -1,0 +1,163 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8E1C6465-F17E-43A7-82E3-90F93DEC4DEE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TaskManagerWeb</RootNamespace>
+    <AssemblyName>TaskManagerWeb</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Nancy">
+      <HintPath>..\packages\Nancy.1.4.3\lib\net40\Nancy.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy.Hosting.Self">
+      <HintPath>..\packages\Nancy.Hosting.Self.1.4.1\lib\net40\Nancy.Hosting.Self.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy.ViewEngines.Razor">
+      <HintPath>..\packages\Nancy.Viewengines.Razor.1.4.3\lib\net40\Nancy.ViewEngines.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.30506.0\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CustomBootstrapper.cs" />
+    <Compile Include="Modules\ErrorModule.cs" />
+    <Compile Include="Modules\HomeModule.cs" />
+    <Compile Include="Modules\LoginModule.cs" />
+    <Compile Include="Modules\ExcelModule.cs" />
+    <Compile Include="Modules\TaskModule.cs" />
+    <Compile Include="Startup.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Content\fonts\fontawesome-webfont.eot" />
+    <None Include="Content\fonts\fontawesome-webfont.ttf" />
+    <None Include="Content\fonts\fontawesome-webfont.woff" />
+    <None Include="Content\fonts\fontawesome-webfont.woff2" />
+    <None Include="Content\fonts\FontAwesome.otf" />
+    <None Include="Content\fonts\glyphicons-halflings-regular.eot" />
+    <None Include="Content\fonts\glyphicons-halflings-regular.ttf" />
+    <None Include="Content\fonts\glyphicons-halflings-regular.woff" />
+    <None Include="Content\fonts\glyphicons-halflings-regular.woff2" />
+    <None Include="Content\Scripts\plugins\layer\layim\data\chatlog.json" />
+    <None Include="Content\Scripts\plugins\layer\layim\data\friend.json" />
+    <None Include="Content\Scripts\plugins\layer\layim\data\group.json" />
+    <None Include="Content\Scripts\plugins\layer\layim\data\groups.json" />
+    <None Include="packages.config" />
+    <None Include="Views\Home\DestTop.cshtml" />
+    <None Include="Views\Home\Index.cshtml" />
+    <None Include="Views\Shared\_Layout.cshtml" />
+    <None Include="Views\Task\Edit.cshtml" />
+    <None Include="Views\Task\Grid.cshtml" />
+    <None Include="Views\_ViewStart.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\Css\bootstrap.min.css" />
+    <Content Include="Content\Css\common.css" />
+    <Content Include="Content\Css\font-awesome.min.css" />
+    <Content Include="Content\Css\index.css" />
+    <Content Include="Content\Css\plugins\jqgrid\ui.jqgrid.css" />
+    <Content Include="Content\Css\style.css" />
+    <Content Include="Content\fonts\fontawesome-webfont.svg" />
+    <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Content\Image\404.png" />
+    <Content Include="Content\Image\500.png" />
+    <Content Include="Content\Image\favicon.ico" />
+    <Content Include="Content\Image\head-bg.png" />
+    <Content Include="Content\Scripts\framework.js" />
+    <Content Include="Content\Scripts\jquery-1.9.0.min.js" />
+    <Content Include="Content\Scripts\plugins\artTemplate\template-native.js" />
+    <Content Include="Content\Scripts\plugins\artTemplate\template.js" />
+    <Content Include="Content\Scripts\plugins\iCheck\custom.css" />
+    <Content Include="Content\Scripts\plugins\iCheck\green%402x.png" />
+    <Content Include="Content\Scripts\plugins\iCheck\green.png" />
+    <Content Include="Content\Scripts\plugins\iCheck\icheck.min.js" />
+    <Content Include="Content\Scripts\plugins\jqgrid\i18n\grid.locale-cn.js" />
+    <Content Include="Content\Scripts\plugins\jqgrid\jquery.jqGrid.min.js" />
+    <Content Include="Content\Scripts\plugins\layer\extend\layer.ext.js" />
+    <Content Include="Content\Scripts\plugins\layer\laydate\laydate.js" />
+    <Content Include="Content\Scripts\plugins\layer\laydate\need\laydate.css" />
+    <Content Include="Content\Scripts\plugins\layer\laydate\skins\default\icon.png" />
+    <Content Include="Content\Scripts\plugins\layer\laydate\skins\default\laydate.css" />
+    <Content Include="Content\Scripts\plugins\layer\layer.min.js" />
+    <Content Include="Content\Scripts\plugins\layer\layim\layim.css" />
+    <Content Include="Content\Scripts\plugins\layer\layim\layim.js" />
+    <Content Include="Content\Scripts\plugins\layer\layim\loading.gif" />
+    <Content Include="Content\Scripts\plugins\layer\skin\default\icon-ext.png" />
+    <Content Include="Content\Scripts\plugins\layer\skin\default\icon.png" />
+    <Content Include="Content\Scripts\plugins\layer\skin\default\icon_ext.png" />
+    <Content Include="Content\Scripts\plugins\layer\skin\default\loading-0.gif" />
+    <Content Include="Content\Scripts\plugins\layer\skin\default\loading-1.gif" />
+    <Content Include="Content\Scripts\plugins\layer\skin\default\loading-2.gif" />
+    <Content Include="Content\Scripts\plugins\layer\skin\default\textbg.png" />
+    <Content Include="Content\Scripts\plugins\layer\skin\default\xubox_ico0.png" />
+    <Content Include="Content\Scripts\plugins\layer\skin\default\xubox_loading0.gif" />
+    <Content Include="Content\Scripts\plugins\layer\skin\default\xubox_loading1.gif" />
+    <Content Include="Content\Scripts\plugins\layer\skin\default\xubox_loading2.gif" />
+    <Content Include="Content\Scripts\plugins\layer\skin\default\xubox_loading3.gif" />
+    <Content Include="Content\Scripts\plugins\layer\skin\default\xubox_title0.png" />
+    <Content Include="Content\Scripts\plugins\layer\skin\layer.css" />
+    <Content Include="Content\Scripts\plugins\layer\skin\layer.ext.css" />
+    <Content Include="Content\Scripts\plugins\layer\skin\moon\default.png" />
+    <Content Include="Content\Scripts\plugins\layer\skin\moon\style.css" />
+    <Content Include="Content\Scripts\plugins\validate\additional-methods.min.js" />
+    <Content Include="Content\Scripts\plugins\validate\jquery.metadata.js" />
+    <Content Include="Content\Scripts\plugins\validate\jquery.validate.min.js" />
+    <Content Include="Content\Scripts\plugins\validate\messages_zh.min.js" />
+    <Content Include="Views\Error\NotFound.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ywdsoft.Utility\Ywdsoft.Utility.csproj">
+      <Project>{d2aaedff-9f30-49a6-b242-f655503c24f3}</Project>
+      <Name>Ywdsoft.Utility</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

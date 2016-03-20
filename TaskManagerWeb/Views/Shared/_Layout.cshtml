@@ -1,0 +1,38 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="keywords" content="TaskManager,开源,任务管理平台,焰尾迭" />
+    <meta name="description" content="TaskManager是基于Quartz.NET的一款开源任务管理系统，使用Window服务来承载。目前系统集成了四个常用任务，代理IP爬虫，快递进度，消息通知，动态修改Job任务。" />
+    <link rel="shortcut icon" type="image/x-icon" href="~/Content/Image/favicon.ico">
+    <title>@ViewBag.Title</title>
+    <link href="~/Content/Css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Content/Css/common.css" rel="stylesheet">
+    <link href="~/Content/Css/style.css" rel="stylesheet">
+    <link href="~/Content/Css/font-awesome.min.css" rel="stylesheet">
+    @RenderSection("style", required: false)
+</head>
+<body>
+    @RenderBody()
+
+    <script src="~/Content/Scripts/jquery-1.9.0.min.js"></script>
+    <!--layer-->
+    <script src="~/Content/Scripts/plugins/layer/layer.min.js"></script>
+    @RenderSection("scripts", required: false)
+
+    <!--输出get请求参数到隐藏控件中，js中可以通过__a.value 形式来获取url参数 -->
+    @{
+        var qs = Context.Request.Query;
+        foreach (var key in Request.Query)
+        {
+            <input id="__@key" type="hidden" value="@qs[key]" />
+        }
+    }
+</body>
+</html>

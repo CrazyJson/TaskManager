@@ -298,7 +298,7 @@ namespace WSWinForm
         private void btnBrowser_Click(object sender, EventArgs e)
         {
             openFileDialog1.Filter = "(*.exe)|*.exe";
-            openFileDialog1.FileName = "Mysoft.CRE.WindowService.exe";
+            openFileDialog1.FileName = "Ywdsoft.CRE.WindowService.exe";
             openFileDialog1.Title = "选择Windows服务";
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {

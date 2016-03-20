@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("明源软件")]
 [assembly: AssemblyProduct("Windows服务安装与卸载")]
-[assembly: AssemblyCopyright("Copyright © Mysoft 2014")]
+[assembly: AssemblyCopyright("Copyright © Ywdsoft 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

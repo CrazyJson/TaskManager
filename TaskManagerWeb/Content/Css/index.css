@@ -1,0 +1,38 @@
+﻿/*登录页*/
+.login_box{width:650px;height:310px;background: #fff;margin:0 auto;box-shadow: 3px 8px 10px rgba(0,0,0,0.4);border-radius: 10px;}
+.login_box .left{background: #ddf1fb;width:305px;height:310px;border-top-left-radius: 10px;border-bottom-left-radius: 10px;padding-top: 30px;border-right: 2px solid #55b6ed;}
+.login{display: inline-block;width:300px;margin-left: 30px;padding-top: 40px;}
+.item input{width:280px;height:40px;margin-bottom: 20px;border-radius: 5px;border:1px solid #bbb;outline: none;padding-left: 32px;background: #ecf5fa;color: #333;}
+.item input:focus{border:2px solid #4098ca;}
+.login button{height:40px;width:120px;background: #4098ca;border:0;border-radius: 6px;color:#fff;font-size: 16px;margin-left: 80px;margin-top: 10px;}
+.login button:hover{background: #55b6ed;}
+
+/*首页*/
+.header{position:absolute;top:0;width:100%;height:50px;background: url(../Image/head-bg.png) repeat-x;background-size: cover;padding: 0 20px;color:#fff;line-height: 50px;z-index: 2;}
+.header a{color:#fff;}
+.header h1{font-size: 20px;}
+.header_right>li{padding:0 21px;cursor: pointer;transition:all 0.2s;}
+.header_right>li:last-child:hover{background: #55b6ed;}
+.personal_information{position: relative;}
+.personal_information:hover ul{display: block;}
+.personal_information span{padding-left: 8px;}
+.personal_information ul{position: absolute;top:50px;background: #006FC1;line-height: 32px;display: none;padding: 0 30px;z-index: 100;}
+
+/*中间内容区*/
+.content{position: absolute;bottom:35px;top:50px;width:100%;overflow:auto;}
+/*导航*/
+.nav{width:200px;background:#F0F9FD;height:100%;color:#fff;line-height: 40px;border-right: 1px solid #B7D5DF;position:absolute;left:0;}
+.nav a{display: block;color: #333;}
+.menu_a{background: #D4E7F0;border-bottom: 1px solid #B9CAD3;font-size: 16px;}
+.menu_a>a{padding-left: 50px;}
+.menu_a:last-child{border: 0;}
+.menu_a .fa{color:#6BB4D5;margin-right:10px;}
+.menu_b{background: #F0F9FD;width:199px;font-size: 14px;display: none;line-height: 32px;}
+.menu_b a{padding-left: 72px;}
+.menu_b .current a{background: #3EAFE0;color:#fff;border-left: 3px solid #EA2020;}
+.arr_r{width: 0;  height: 0;  border-top: 10px solid transparent;  border-right: 14px solid #F0F9FD;  border-bottom: 10px solid transparent;margin-top: 6px;}
+/*主体内容区*/
+#right{width:100%;padding:10px;padding-left:210px;height:100%;}
+iframe{width:100%;height:100%;overflow: auto;}
+/*底部*/
+.myfooter{height:35px;background: #F0F9FD;border-top: 1px solid #B9CAD3;position: absolute;bottom: 0;width:100%;text-align: center;line-height: 35px;color:#999;}

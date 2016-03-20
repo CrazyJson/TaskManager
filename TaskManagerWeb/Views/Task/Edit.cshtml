@@ -1,0 +1,222 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase
+@{
+    ViewBag.Title = "任务详情";
+}
+@section style{
+    <link rel="stylesheet" href="/Content/Scripts/plugins/iCheck/custom.css" />
+}
+
+<form class="form-horizontal" id="form_baseInfo" style="margin-top:20px;">
+    <input name="TaskID" type="hidden" />
+    <div class="row-fluid col-sm-10 col-sm-offset-1 mb15">
+        <p class="f16 fb">基本信息</p>
+        <hr>
+    </div>
+    <div class="row-fluid clearfix">
+        <div class="col-xs-6">
+            <div class="form-group">
+                <label class="col-sm-4 control-label">
+                    <span class="editing-mode f-sign">* </span>任务名称：
+                </label>
+                <div class="col-sm-7">
+                    <input name="TaskName" type="text" class="form-control" required maxlength="100" placeholder="请输入任务名称">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-4 control-label">
+                    任务参数：
+                </label>
+                <div class="col-sm-7">
+                    <input name="TaskParam" type="text" class="form-control" maxlength="5000">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-4 control-label">
+                    <span class="editing-mode f-sign">* </span>程序集名称：
+                </label>
+                <div class="col-sm-7">
+                    <input name="Assembly" type="text" class="form-control" required maxlength="2000" placeholder="请输入程序集">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-4 control-label">
+                    <span class="editing-mode f-sign">* </span>任务状态：
+                </label>
+                <div class="col-sm-7">
+                    <div class="radio i-checks">
+                        <label>
+                            <input type="radio" disabled checked value="0" name="Status"><i></i>运行
+                        </label>
+                        <label>
+                            <input type="radio" disabled value="1" name="Status"><i></i>停止
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">
+                    <span class="editing-mode f-sign">* </span>Cron表达式：
+                </label>
+                <div class="col-sm-7">
+                    <input name="CronExpressionString" type="text" class="form-control" required maxlength="200" placeholder="请输入Cron表达式">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">
+                    <span class="editing-mode f-sign">* </span>表达式说明：
+                </label>
+                <div class="col-sm-7">
+                    <input name="CronRemark" type="text" class="form-control" required maxlength="200" placeholder="请输入表达式说明">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">
+                    <span class="editing-mode f-sign">* </span>类名(包含命名空间)：
+                </label>
+                <div class="col-sm-7">
+                    <input name="Class" type="text" class="form-control" required maxlength="2000" placeholder="请输入类名">
+                </div>
+            </div>
+         
+        </div>
+    </div>
+
+    <div class="row-fluid clearfix mb15">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">备注：</label>
+                <div class="col-sm-9">
+                    <textarea name="Remark" class="form-control" style="resize: none;height:100px;" maxlength="500"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="col-xs-12 pb15">
+            <div class="form-group">
+                <div class="col-sm-12 ta-c">
+                    <button class="editing-mode btn btn-primary btn-sm" id="btn_save">保存</button>
+                    <button class="editing-mode btn btn-primary btn-sm" id="btn_saveAndNew">保存并新增</button>
+                    <button class="editing-mode btn btn-primary btn-sm" id="btn_saveAndClose">保存并关闭</button>
+                    <button class="btn btn-white btn-sm detail-mode" onclick="closeWindow()">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section scripts{
+    <script src="~/Content/Scripts/plugins/iCheck/icheck.min.js"></script>
+    <script src="~/Content/Scripts/plugins/validate/jquery.validate.min.js"></script>
+    <script src="~/Content/Scripts/plugins/validate/messages_zh.min.js"></script>
+    <!--自定义js-->
+    <script src="~/Content/Scripts/framework.js"></script>
+
+    <script>
+        var mode, id, formBaseInfo = null;
+        $(function () {
+            Ywdsoft.parse();
+            mode = $("#__mode").val();
+            id = $("#__id").val();
+            formBaseInfo = new Ywdsoft.Form("form_baseInfo");
+            //初始化页面数据
+            initData();
+            bindEvents();
+        });
+
+        //初始化数据
+        function initData() {
+            if (mode != WebState.ADD) {
+                //加载等待层
+                var index;
+                $.ajax({
+                    type: "get",
+                    url: "/Task/GetByID/" + id,
+                    dataType: "json",
+                    beforeSend: function () {
+                        //加载等待层
+                        index = layer.load(0);
+                    },
+                    complete: function () {
+                        layer.close(index);
+                    },
+                    success: function (data) {
+                        if (data.HasError) {
+                            layer.alert(data.Message);
+                        } else {
+                            formBaseInfo.setData(data.Result);
+                            formBaseInfo.setDisabled(mode == WebState.READ);
+                        }
+                    }
+                });
+            }
+        }
+
+        /*
+        * 功能：    保存表单数据
+        * 参数：    afterFunc  保存成功后执行的回调函数
+       */
+        function saveForm(afterFunc) {
+            if (!formBaseInfo.validate()) {
+                return;
+            }
+            var data = formBaseInfo.getData();
+
+            var type = "post";
+            var url = "/Task";
+            if (data.TaskID) {
+                type = "put";
+            } else {
+                data.TaskID = '@Guid.Empty.ToString()';
+            }
+            var index;
+            $.ajax({
+                type: type,
+                url: url,
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                dataType: "json",
+                beforeSend: function () {
+                    //加载等待层
+                    index = layer.load(0);
+                },
+                complete: function () {
+                    layer.close(index);
+                },
+                success: function (data) {
+                    if (data.HasError) {
+                        layer.alert(data.Message);
+                        return;
+                    }
+                    if (typeof (afterFunc) == "function") {
+                        afterFunc(data.Result);
+                    }
+                }
+            });
+        }
+
+        ////事件绑定
+        function bindEvents() {
+            //保存
+            $("#btn_save").on("click", function () {
+                saveForm(setMode);
+            });
+
+            //保存关闭
+            $("#btn_saveAndClose").on("click", function () {
+                saveForm(closeWindow);
+            });
+
+            //保存新增
+            $("#btn_saveAndNew").on("click", function () {
+                saveForm(setModeNew);
+            });           
+        };
+    </script>
+}
+

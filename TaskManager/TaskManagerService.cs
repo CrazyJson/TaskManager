@@ -1,4 +1,5 @@
-﻿using Mysoft.Utility;
+﻿using Ywdsoft.Utility;
+using Owin_Nancy;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -37,11 +38,20 @@ namespace TaskManager
             ConfigInit.InitConfig();
             QuartzHelper.InitScheduler();
             QuartzHelper.StartScheduler();
+
+            // 保持web服务运行  
+            ThreadPool.QueueUserWorkItem((o) =>
+            {
+                //启动站点
+                Startup.Start(SysConfig.WebPort);
+            });
         }
 
         protected override void OnStop()
         {
             QuartzHelper.StopSchedule();
+            //回收资源
+            Startup.Dispose();
             System.Environment.Exit(0);
         }
     }

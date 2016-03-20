@@ -1,0 +1,85 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase
+@{
+    ViewBag.Title = "开源任务管理平台TaskManager-首页";
+
+}
+@section style{
+    <link rel="stylesheet" href="~/Content/Css/index.css" />
+}
+<!--头部-->
+<div class="header">
+    <h1 class="fl dis pt15">开源任务管理平台TaskManager</h1>
+    <ul class="fr header_right">
+        <li class="fl personal_information">
+            <i class="fa fa-user" style="font-size: 16px;"></i> hi,<span>焰尾迭 <i class="fa fa-angle-double-down" style="font-size: 16px;"></i></span>
+            <ul>
+                <li><a href="javascript:void(0)" class="navBar" data-url="personalInformation.html">个人信息</a></li>
+                <li><a href="javascript:void(0)" class="navBar" data-url="changeInformation.html">修改信息</a></li>
+            </ul>
+        </li>
+        <li class="fl"><a href="/Login/Exit"><i class="glyphicon glyphicon-off" style="color: #c60000"></i> 退出</a></li>
+    </ul>
+</div>
+
+<div class="content">
+    <!--左侧导航-->
+    <div class="nav">
+        <ul>
+            <li class="menu_a">
+                <a href="javascript:void(0)"><i class="fa fa-tasks"></i>任务管理</a>
+                <ul class="menu_b">
+                    <li><a href="javascript:void(0)" class="navBar" data-url="/Task/Grid">任务管理<span class="arr_r fr"></span></a></li>
+                </ul>
+            </li>
+            <li class="menu_a">
+                <a href="javascript:void(0)"><i class="fa fa-user"></i>账号管理</a>
+                <ul class="menu_b">
+                </ul>
+            </li>
+            <li class="menu_a">
+                <a href="javascript:void(0)"><i class="fa fa-bar-chart"></i>数据分析</a>
+                <ul class="menu_b">
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div id="right">
+        <!--主体部分-->
+        <iframe src="/DestTop" frameborder="0" allowtransparency="true" id="mainUrl"></iframe>
+    </div>
+</div>
+
+
+<!--底部-->
+<div class="myfooter">
+    版权所有：<a href="http://yanweidie.cnblogs.com" target="_blank">焰尾迭</a>
+</div>
+
+
+
+@section scripts{
+    <script>
+        $(function () {
+            //左侧菜单展开收缩
+            $('.menu_a').on('click', function (e) {
+                e.stopPropagation();
+                if ($(this).find('.menu_b').is(':hidden')) {
+                    $(this).find('.menu_b').slideDown()
+                } else {
+                    $(this).find('.menu_b').slideUp();
+                };
+                $(this).siblings('.menu_a').find('.menu_b').slideUp();
+                $('.menu_b li').removeClass('current');
+            });
+            $('.menu_b li').on('click', function (e) {
+                e.stopPropagation();
+                $(this).addClass('current').siblings().removeClass('current');
+            });
+            //点击切换菜单
+            $('.navBar').on('click', function () {
+                var url = $(this).attr('data-url');
+                $('#mainUrl').attr({ src: url })
+            })
+        })
+    </script>
+}

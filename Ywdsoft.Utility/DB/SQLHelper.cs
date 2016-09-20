@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Data;
-using System.Xml;
 using System.Data.SqlClient;
-using System.Collections;
-using System.Configuration;
 using System.Collections.Generic;
 
 namespace Ywdsoft.Utility

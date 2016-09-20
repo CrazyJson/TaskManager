@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml;
 
 namespace Ywdsoft.Utility
 {
@@ -21,11 +18,6 @@ namespace Ywdsoft.Utility
         /// 任务名称
         /// </summary>
         public string TaskName { get; set; }
-
-        /// <summary>
-        /// 任务执行参数
-        /// </summary>
-        public string TaskParam { get; set; }
 
         /// <summary>
         /// 运行频率设置
@@ -108,10 +100,10 @@ namespace Ywdsoft.Utility
     /// </summary>
     public class TaskHelper
     {
-        private static string InsertSQL = @"INSERT INTO dbo.p_Task(TaskID,TaskName,TaskParam,CronExpressionString,Assembly,Class,Status,CronRemark,Remark,LastRunTime)
-                            VALUES(@TaskID,@TaskName,@TaskParam,@CronExpressionString,@Assembly,@Class,@Status,@CronRemark,@Remark,@LastRunTime)";
+        private static string InsertSQL = @"INSERT INTO dbo.p_Task(TaskID,TaskName,CronExpressionString,Assembly,Class,Status,CronRemark,Remark,LastRunTime)
+                            VALUES(@TaskID,@TaskName,@CronExpressionString,@Assembly,@Class,@Status,@CronRemark,@Remark,@LastRunTime)";
 
-        private static string UpdateSQL = @"UPDATE dbo.p_Task SET TaskName=@TaskName,TaskParam=@TaskParam,CronExpressionString=@CronExpressionString,Assembly=@Assembly,
+        private static string UpdateSQL = @"UPDATE dbo.p_Task SET TaskName=@TaskName,CronExpressionString=@CronExpressionString,Assembly=@Assembly,
                                 Class=@Class,CronRemark=@CronRemark,Remark=@Remark,LastRunTime=@LastRunTime WHERE TaskID=@TaskID";
         /// <summary>
         /// 获取指定id任务数据
@@ -121,6 +113,11 @@ namespace Ywdsoft.Utility
         public static TaskUtil GetById(string TaskID)
         {
             return SQLHelper.Single<TaskUtil>("SELECT * FROM p_Task WHERE TaskID=@TaskID", new { TaskID = TaskID });
+        }
+
+        public static void RunById(string TaskID)
+        {
+            QuartzHelper.RunOnceTask(TaskID);
         }
 
         /// <summary>

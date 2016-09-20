@@ -1,0 +1,117 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase
+@{
+    ViewBag.Title = "系统参数配置";
+}
+
+@section style{
+    <link rel="stylesheet" href="/Content/Scripts/plugins/iCheck/custom.css" />
+    <!-- 自定义-->
+    <style>
+        .Dtitle {border-bottom-width: 1px;font-size: 16px;background-color: #F3F3F4;padding: 8px;font-weight: bold;padding-left: 20px;}
+        .main-table {width: 100%;margin: 0 auto;}
+        .Dnamelink {vertical-align: middle;border-bottom: 1px dashed #ddd;padding: 12px;padding-left: 20px;width: 33%;float: left;}
+        .Dcontent {margin-bottom: 30px;}
+        a {color: #4a4a4a;}
+    </style>
+}
+
+
+<div class="row-fluid clearfix m10 mt0 ml0">
+    <div class="row-fluid clearfix">
+        <div class="col-sm-4 pl0">
+            <div class="input-group">
+                <span class="input-group-addon" style="min-width:66px">配置项名称</span>
+                <input id="GroupName_Search" class="form-control input-sm" type="text" />
+            </div>
+        </div>
+    </div>
+</div>
+<div id="main-table">
+
+</div>
+
+
+<!-- 添加用户的对话框体 -->
+<div class="modal fade" id="addConfig">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title userTitles"></h4>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="GroupType" id="form_GroupType" />
+                <form id="CinfigForm" class="form-horizontal"></form>
+            </div>
+            <div class="modal-footer">
+                <button id="btn_save" type="submit" class="btn btn-primary btn-sm btn-confirm">保存</button>
+                <button id="btn_saveAndClose" type="submit" class="btn btn-primary btn-sm btn-confirm">保存并关闭</button>
+                <button type="button" class="btn btn-white btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="Config_Index" type="text/html">
+    <div class="Dtitle">参数配置</div>
+    <div class="Dcontent clearfix">
+        {{ each Result as item i}}
+        <a class="Dnamelink" id="{{item.Group.GroupType}}">{{item.Group.GroupName}}</a>
+        {{/each}}
+    </div>
+</script>
+
+<script id="Config_Detail" type="text/html">
+    {{ each ListOptions as item i}}
+    <div class="form-group">
+        <label class="col-sm-3 control-label">{{if item.Required}}<span style="color:red;">*</span>{{/if}}{{item.OptionName}}：</label>
+        <div class="col-sm-8">
+            {{if item.ValueType==3}}
+            <div class="radio i-checks">
+                <label class="radio2">
+                    <input type="radio" {{if item.Value && item.Value.toLowerCase()=="true"}} checked="checked" {{/if}} value="true" name="{{item.Key}}" ValueType="{{item.ValueType}}" OptionName="{{item.OptionName}}" {{if item.Title}} title="{{item.Title}}" {{/if}}><i></i>是
+                </label>
+                <label class="radio2">
+                    <input type="radio" {{if item.Value && item.Value.toLowerCase()=="false"}} checked="checked" {{/if}} value="false" name="{{item.Key}}" ValueType="{{item.ValueType}}" OptionName="{{item.OptionName}}" {{if item.Title}} title="{{item.Title}}" {{/if}}><i></i>否
+                </label>
+            </div>
+            {{else if item.ValueType==5}}
+            <textarea name="{{item.Key}}" ValueType="{{item.ValueType}}" OptionName="{{item.OptionName}}" class="form-control" style="resize: none;height:100px;" maxlength="2000"></textarea>
+            {{else}}
+            <input name="{{item.Key}}" ValueType="{{item.ValueType}}" OptionName="{{item.OptionName}}" maxlength="150" type="{{if item.ValueType==1}}number{{else if item.ValueType==2}}text{{else if item.ValueType==4}}password{{/if}}" class="form-control" {{if item.Required}} required="true" {{/if}} {{item.ValidateRule}} placeholder="请输入{{item.OptionName}}" value="{{item.Value}}" {{if item.Title}} title="{{item.Title}}" {{/if}} />
+            {{/if}}
+        </div>
+    </div>
+    {{/each}}
+    <div class="form-group">
+        <label class="col-sm-3 control-label">立即应用：</label>
+        <div class="col-sm-8">
+            <div class="radio i-checks">
+                <label class="radio2">
+                    <input type="radio" {{if Group.ImmediateUpdate}} checked="checked" {{/if}} disabled="disabled" value="true" a1="{{Group.ImmediateUpdate.toString()=="true"}}"><i></i>是
+                </label>
+                <label class="radio2">
+                    <input type="radio" {{if !Group.ImmediateUpdate}} checked="checked" {{/if}} disabled="disabled" value="false" a1="{{Group.ImmediateUpdate.toString()}}"><i></i>否
+                </label>
+            </div>
+            <p class="pt5" style="color:red;">*如果“立即应用”为“是”，修改后系统会应用更新，否则服务器重启进行应用</p>
+        </div>
+    </div>
+</script>
+
+@section scripts{
+    <script src="~/Content/Scripts/plugins/artTemplate/template.js"></script>
+    <script src="~/Content/Scripts/plugins/iCheck/icheck.min.js"></script>
+    <!--表单校验-->
+    <script src="~/Content/Scripts/plugins/validate/jquery.validate.min.js"></script>
+    <script src="~/Content/Scripts/plugins/validate/additional-methods.min.js"></script>
+    <script src="~/Content/Scripts/plugins/validate/messages_zh.min.js"></script>
+
+    <script src="~/Content/Scripts/Config.js?ver=@ViewBag.Version"></script>
+
+    <script>
+        $(function () {
+            Ywdsoft.Config.init();
+        });
+    </script>
+}

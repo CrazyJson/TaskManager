@@ -2,14 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Reflection;
 
 namespace Ywdsoft.Utility
 {
-	#region 委托定义
+    #region 委托定义
 
-	internal delegate void InstanceAction<TTarget>(TTarget target);
+    internal delegate void InstanceAction<TTarget>(TTarget target);
 	internal delegate void InstanceAction<TTarget, A1>(TTarget target, A1 arg1);
 	internal delegate void InstanceAction<TTarget, A1, A2>(TTarget target, A1 arg1, A2 arg2);
 	internal delegate void InstanceAction<TTarget, A1, A2, A3>(TTarget target, A1 arg1, A2 arg2, A3 arg3);

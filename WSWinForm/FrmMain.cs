@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Configuration.Install;
@@ -298,7 +293,7 @@ namespace WSWinForm
         private void btnBrowser_Click(object sender, EventArgs e)
         {
             openFileDialog1.Filter = "(*.exe)|*.exe";
-            openFileDialog1.FileName = "Ywdsoft.CRE.WindowService.exe";
+            openFileDialog1.FileName = "";
             openFileDialog1.Title = "选择Windows服务";
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {

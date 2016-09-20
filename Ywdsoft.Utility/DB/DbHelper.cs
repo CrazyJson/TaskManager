@@ -6,8 +6,6 @@ using System.Text;
 using System.Data.SqlClient;
 using System.Data;
 using System.Reflection;
-using System.Xml;
-using System.IO;
 using System.Data.Common;
 
 namespace Ywdsoft.Utility

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Ywdsoft.Utility
+﻿namespace Ywdsoft.Utility
 {
     /// <summary>
     /// 缓存系统所有配置信息，以键值对形式存在
@@ -24,17 +19,5 @@ namespace Ywdsoft.Utility
         /// </summary>
         [PathMap(Key = "SqlConnect")]
         public static string SqlConnect { get; set; }
-
-        /// <summary>
-        /// 邮件信息配置
-        /// </summary>
-        [PathMap(Key = "MailInfo")]
-        public static string MailInfo { get; set; }
-
-        /// <summary>
-        /// 邮件信息配置
-        /// </summary>
-        [PathMap(Key = "WebPort")]
-        public static int WebPort { get; set; }
     }
 }

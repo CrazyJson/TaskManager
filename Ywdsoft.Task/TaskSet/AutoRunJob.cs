@@ -1,13 +1,11 @@
 ﻿using Ywdsoft.Task.Utils;
 using Ywdsoft.Utility;
-using Newtonsoft.Json;
 using Quartz;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Ywdsoft.Task.TaskSet
 {

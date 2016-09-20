@@ -1,14 +1,10 @@
 ﻿using Ywdsoft.Utility;
 using Owin_Nancy;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Linq;
 using System.ServiceProcess;
-using System.Text;
 using System.Threading;
+using Ywdsoft.Utility.ConfigHandler;
+using Ywdsoft.Utility.Mef;
 
 namespace TaskManager
 {
@@ -36,6 +32,11 @@ namespace TaskManager
             }
             //配置信息读取
             ConfigInit.InitConfig();
+            //3.系统参数配置初始化
+            MefConfig.Init();
+            ConfigManager configManager = MefConfig.TryResolve<ConfigManager>();
+            configManager.Init();
+
             QuartzHelper.InitScheduler();
             QuartzHelper.StartScheduler();
 
@@ -43,7 +44,7 @@ namespace TaskManager
             ThreadPool.QueueUserWorkItem((o) =>
             {
                 //启动站点
-                Startup.Start(SysConfig.WebPort);
+                Startup.Start(SystemConfig.WebPort);
             });
         }
 

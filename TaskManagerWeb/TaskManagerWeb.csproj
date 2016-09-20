@@ -7,7 +7,7 @@
     <ProjectGuid>{8E1C6465-F17E-43A7-82E3-90F93DEC4DEE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TaskManagerWeb</RootNamespace>
+    <RootNamespace>Ywdsoft</RootNamespace>
     <AssemblyName>TaskManagerWeb</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -32,6 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Zip, Version=1.9.1.5, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.1.2.5\lib\net40\Ionic.Zip.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Nancy">
       <HintPath>..\packages\Nancy.1.4.3\lib\net40\Nancy.dll</HintPath>
     </Reference>
@@ -41,15 +45,21 @@
     <Reference Include="Nancy.ViewEngines.Razor">
       <HintPath>..\packages\Nancy.Viewengines.Razor.1.4.3\lib\net40\Nancy.ViewEngines.Razor.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPOI, Version=1.2.5.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.1.2.5\lib\net40\NPOI.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.30506.0\lib\net40\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -59,10 +69,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomBootstrapper.cs" />
+    <Compile Include="Excel\TaskExcelImport.cs" />
+    <Compile Include="Modules\BaseModule.cs" />
     <Compile Include="Modules\ErrorModule.cs" />
     <Compile Include="Modules\HomeModule.cs" />
     <Compile Include="Modules\LoginModule.cs" />
     <Compile Include="Modules\ExcelModule.cs" />
+    <Compile Include="Modules\ConfigModule.cs" />
     <Compile Include="Modules\TaskModule.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -83,6 +96,10 @@
     <None Include="Content\Scripts\plugins\layer\layim\data\group.json" />
     <None Include="Content\Scripts\plugins\layer\layim\data\groups.json" />
     <None Include="packages.config" />
+    <None Include="Template\Excel\任务批量导入.xls">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Views\Config\Grid.cshtml" />
     <None Include="Views\Home\DestTop.cshtml" />
     <None Include="Views\Home\Index.cshtml" />
     <None Include="Views\Shared\_Layout.cshtml" />
@@ -96,6 +113,7 @@
     <Content Include="Content\Css\font-awesome.min.css" />
     <Content Include="Content\Css\index.css" />
     <Content Include="Content\Css\plugins\jqgrid\ui.jqgrid.css" />
+    <Content Include="Content\Css\plugins\webuploader\webuploader.css" />
     <Content Include="Content\Css\style.css" />
     <Content Include="Content\fonts\fontawesome-webfont.svg" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
@@ -103,8 +121,10 @@
     <Content Include="Content\Image\500.png" />
     <Content Include="Content\Image\favicon.ico" />
     <Content Include="Content\Image\head-bg.png" />
+    <Content Include="Content\Scripts\bootstrap.min.js" />
+    <Content Include="Content\Scripts\Config.js" />
     <Content Include="Content\Scripts\framework.js" />
-    <Content Include="Content\Scripts\jquery-1.9.0.min.js" />
+    <Content Include="Content\Scripts\jquery-1.10.2.min.js" />
     <Content Include="Content\Scripts\plugins\artTemplate\template-native.js" />
     <Content Include="Content\Scripts\plugins\artTemplate\template.js" />
     <Content Include="Content\Scripts\plugins\iCheck\custom.css" />
@@ -143,6 +163,22 @@
     <Content Include="Content\Scripts\plugins\validate\jquery.metadata.js" />
     <Content Include="Content\Scripts\plugins\validate\jquery.validate.min.js" />
     <Content Include="Content\Scripts\plugins\validate\messages_zh.min.js" />
+    <Content Include="Content\Scripts\plugins\webuploader\Uploader.swf" />
+    <Content Include="Content\Scripts\plugins\webuploader\webuploader.custom.js" />
+    <Content Include="Content\Scripts\plugins\webuploader\webuploader.custom.min.js" />
+    <Content Include="Content\Scripts\plugins\webuploader\webuploader.fis.js" />
+    <Content Include="Content\Scripts\plugins\webuploader\webuploader.flashonly.js" />
+    <Content Include="Content\Scripts\plugins\webuploader\webuploader.flashonly.min.js" />
+    <Content Include="Content\Scripts\plugins\webuploader\webuploader.html5only.js" />
+    <Content Include="Content\Scripts\plugins\webuploader\webuploader.html5only.min.js" />
+    <Content Include="Content\Scripts\plugins\webuploader\webuploader.js" />
+    <Content Include="Content\Scripts\plugins\webuploader\webuploader.min.js" />
+    <Content Include="Content\Scripts\plugins\webuploader\webuploader.noimage.js" />
+    <Content Include="Content\Scripts\plugins\webuploader\webuploader.noimage.min.js" />
+    <Content Include="Content\Scripts\plugins\webuploader\webuploader.nolog.js" />
+    <Content Include="Content\Scripts\plugins\webuploader\webuploader.nolog.min.js" />
+    <Content Include="Content\Scripts\plugins\webuploader\webuploader.withoutimage.js" />
+    <Content Include="Content\Scripts\plugins\webuploader\webuploader.withoutimage.min.js" />
     <Content Include="Views\Error\NotFound.html" />
   </ItemGroup>
   <ItemGroup>

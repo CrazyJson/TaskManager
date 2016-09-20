@@ -1185,84 +1185,6 @@ var Ywdsoft = (function () {
     };
 })();
 
-Namespace.register("Ywdsoft.Pub.AppFind");
-/*
-* 功能：    列表查询控件公共方法
-* 参数：    无
-* 返回值：  无
-* 创建人：  杜冬军
-* 创建时间：2015-10-22
-*/
-Ywdsoft.Pub.AppFind = (function () {
-    return {
-        /*
-        * 功能：    获取查询控件对应的查询条件
-        * 参数：    id：查询控件ID 没有传值 默认为appFind
-        * 返回值：  查询过滤条件
-        *    { "FilterList": [{ "Operator": "like", "FieldName": "xx", "FieldValue":"xx" },{}], "FixedFilterList": [{ "ParamName": "UserGUID", "ParamValue": "" }] };
-        * 创建人：  杜冬军
-        * 创建时间：2015-11-11
-        */
-        GetQueryParam: function (id) {
-            if (!id) {
-                id = "appFind";
-            }
-            var FilterList = [];
-            $("#" + id).find(".form-control").each(function (i, ctl) {
-                var data = $(ctl).attr('data-options');
-                if (data) {
-                    var item = $.parseJSON(data);
-                    if (item.Operator && item.FieldName) {
-                        var Filter = { "Operator": item.Operator, "FieldName": item.FieldName };
-                        switch (ctl.nodeName) {
-                            case "INPUT":
-                                Filter.FieldValue = $(ctl).val();
-                                if ($(ctl).hasClass("layer-date")) {
-                                    Filter.IsDateTime = true;
-                                }
-                                break;
-                            default:
-                                Filter.FieldValue = $(ctl).val();
-                                break;
-                        }
-                        FilterList.push(Filter);
-                    }
-                }
-            });
-            return { "FilterList": FilterList, "FixedFilterList": [] };
-        },
-        /*
-       * 功能：    重置查询条件
-       * 参数：    id：查询控件ID 没有传值 默认为appFind
-       * 返回值：  无
-       * 创建人：  杜冬军
-       * 创建时间：2015-11-11
-       */
-        ResetSearch: function (id) {
-            if (!id) {
-                id = "appFind";
-            }
-            $(':input', '#appFind').not(':button, :submit, :reset, :hidden').val('').removeAttr('checked').removeAttr('selected');
-        },
-        /*
-        * 功能：    通用列表查询方法
-        * 参数：    grid：列表控件
-        *           appFindID：查询控件ID 没有传值 默认为appFind
-        *           callback:回调函数 回调函数接收的参数为收集到的查询参数
-        * 返回值：  无
-        * 创建人：  杜冬军
-        * 创建时间：2015-11-11
-        */
-        GirdLoad: function (grid, appFindID, callback) {
-            var paramList = Ywdsoft.Pub.AppFind.GetQueryParam(appFindID);
-            if (typeof (callback) == "function") {
-                callback(paramList);
-            }
-            grid.load(paramList);
-        }
-    }
-})();
-
 (function ($) {
     var arrId = [];
     var arrType = { "datetime": "Ywdsoft_dateTime" };
@@ -1354,10 +1276,10 @@ Ywdsoft.Pub.AppFind = (function () {
         * 修改日期：2016-01-11
         * 修改人  ：杜冬军
         * 修改内容：添加选项是否显示全部的功能 目前只有单选的时候该选项才起作用，后续进行优化
+        * 版本修改记录
+        * 2016-09-08 添加搜索框赋值方法 
         */
         search: function (options) {
-            console.log('%c查询插件\n%chttp://yanweidie.cnblogs.com\n-------------\nQQ交流群: 147425783', 'color:#009a61; font-size: 28px;', 'color:#009a61');
-
             //展开收缩有回调事件时，默认最大展示条数
             var MAX_SHOW_COUNT = 10;
             //id前缀
@@ -1430,7 +1352,12 @@ Ywdsoft.Pub.AppFind = (function () {
                 if (!item.defaults) {
                     item.defaults = [];
                 }
-                item.customDefaults = [];
+
+                item.selected = [];
+                for (var j = 0; j < item.defaults.length; j++) {
+                    item.selected.push(item.defaults[j]);
+                }
+                item.customSelectd = [];
 
                 //4.是否多选处理,默认为单选
                 if (item.isMultiple == undefined) {
@@ -1461,9 +1388,9 @@ Ywdsoft.Pub.AppFind = (function () {
                     //单选
                     $(this).addClass("selected").siblings("span").removeClass("selected");
 
-                    item.defaults = [];
+                    item.selected = [];
                     if (!$(this).hasClass("option_all")) {
-                        item.defaults.push(item.data[index][item.valueField]);
+                        item.selected.push(item.data[index][item.valueField]);
                         state = "selectremove";
                     } else {
                         state = "cancelall";
@@ -1477,20 +1404,20 @@ Ywdsoft.Pub.AppFind = (function () {
                         state = "cancel";
                         //删除元素,寻找要删除的元素在数组的位置
                         var val = item.data[index][item.valueField];
-                        for (var i = 0, length = item.defaults.length; i < length; i++) {
-                            if (item.defaults[i] == val) {
-                                item.defaults.splice(i, 1);
+                        for (var i = 0, length = item.selected.length; i < length; i++) {
+                            if (item.selected[i] == val) {
+                                item.selected.splice(i, 1);
                             }
                         }
 
-                        if (item.defaults.length == 0) {
+                        if (item.selected.length == 0) {
                             $(this).siblings(".option_all").addClass("selected");
                             state = "cancelall";
                         }
                     } else {
                         $(this).addClass("selected");
                         $(this).siblings(".option_all").removeClass("selected");
-                        item.defaults.push(item.data[index][item.valueField]);
+                        item.selected.push(item.data[index][item.valueField]);
                         state = "select";
                     }
                 }
@@ -1550,13 +1477,13 @@ Ywdsoft.Pub.AppFind = (function () {
                 }
                 //清空当前项其它选择条件
                 $(this).closest(".filter_custom").siblings('.filter_option').find('span').removeClass('selected');
-                item.defaults = [];
+                item.selected = [];
 
 
-                item.customDefaults[0] = start;
+                item.customSelectd[0] = start;
 
                 if (item.custom.isRange) {
-                    item.customDefaults[1] = end;
+                    item.customSelectd[1] = end;
                 }
 
                 //触发查询事件
@@ -1583,12 +1510,17 @@ Ywdsoft.Pub.AppFind = (function () {
                             '<div class="control-type">({0})</div><div class="filter_option" style="padding-right:{1}px;">'.format(item.isMultiple ? "多选" : "单选", _getCustomDivWidth(item) + 20) + _createOptions(item) +
                             '</div>' + _createCustomFilter(i, item) +
                         '</div>' +
-                        '<div class="r" id="{0}_r"><span class="text">展开</span><i class="fa fa-angle-double-down"></i></div>'.format(item.id) +
+                        '<a href="javascript:;" class="r" id="{0}_r"><span class="text">展开</span><i class="fa fa-angle-double-down"></i></a>'.format(item.id) +
                     '</div>');
                 });
 
                 searchCtl.html(strHTML);
-
+                $(".searchbox .searchbox-item").each(function (i) {
+                    var height = $(this).find(".filter_option").outerHeight();
+                    if (height <= 30) {
+                        $(this).find(".r").remove();
+                    }
+                });
                 //如果默认展开行数小于总条数
                 if (settings.expandRow < settings.searchBoxs.length) {
                     searchCtl.after(filterBtn);
@@ -1645,7 +1577,7 @@ Ywdsoft.Pub.AppFind = (function () {
                     if (isHasExpandCallBack && (1 + i) > max) {
                         return;
                     }
-                    strHTML += '<span title="{0}" data-id="{1}" {2}>{0}</span>'.format(detail[item.textField], i, $.inArray(detail[item.valueField], item.defaults) >= 0 ? "class='selected'" : "");
+                    strHTML += '<span title="{0}" data-id="{1}" data-value="{3}" {2}>{0}</span>'.format(detail[item.textField], i, $.inArray(detail[item.valueField], item.defaults) >= 0 ? "class='selected'" : "", detail[item.valueField]);
                 });
 
                 return strHTML;
@@ -1705,16 +1637,18 @@ Ywdsoft.Pub.AppFind = (function () {
                 var value = null;
                 $(settings.searchBoxs).each(function (i, item) {
                     value = {};
-                    if (item.customDefaults.length > 0) {
+                    if (item.customSelectd.length > 0) {
                         //自定义
-                        value[settings.paramCustomkey] = item.customDefaults;
+                        value[settings.paramCustomkey] = item.customSelectd;
+
                     } else {
-                        value[settings.paramkey] = item.defaults;
+                        value[settings.paramkey] = item.selected;
                     }
                     value["isMultiple"] = item.isMultiple;
                     value["id"] = item.srcID;
                     paramList.push(value);
                 });
+
                 return paramList;
             }
 
@@ -1821,8 +1755,8 @@ Ywdsoft.Pub.AppFind = (function () {
            * 创建时间：2015-12-25
            */
             function _clearCustomValue(item) {
-                if (item.custom && item.customDefaults.length > 0) {
-                    item.customDefaults = [];
+                if (item.custom && item.customSelectd.length > 0) {
+                    item.customSelectd = [];
                     //清除输入框的值
                     $("#{0}_c_custom_start".format(item.id)).val('');
 
@@ -1831,10 +1765,95 @@ Ywdsoft.Pub.AppFind = (function () {
                     }
                 }
             }
+
+            /*
+            * 功能：   设置自定义查询框值
+            * 参数：   item  当前项元素
+            * 返回值：  无
+            * 创建人：  杜冬军
+            * 创建时间：2015-12-25
+            */
+            function _setCustomValue(item) {
+                if (item.custom && item.customSelectd.length > 0) {
+                    //清除输入框的值
+                    $("#{0}_c_custom_start".format(item.id)).val(item.customSelectd[0]);
+                    if (item.custom.isRange) {
+                        $("#{0}_c_custom_end".format(item.id)).val(item.customSelectd[1]);
+                    }
+                }
+            }
+
+
+            /*
+            * 功能：   重新给searchBox赋值
+            * 参数：   arrOptionValue  每个过滤项值
+            * 返回值：  无
+            * 创建人：  杜冬军
+            * 创建时间：2016-09-08
+            */
+            function _setSearchValue(arrOptionValue) {
+                if ($.isArray(arrOptionValue)) {
+                    var jsonMapper = {}, itemSet = null;
+                    for (var i = 0, length = arrOptionValue.length; i < length; i++) {
+                        itemSet = arrOptionValue[i];
+                        jsonMapper[itemSet.id] = itemSet;
+                    }
+                    var itemSpans;
+
+                    $(settings.searchBoxs).each(function (i, item) {
+                        itemSet = jsonMapper[item.srcID];
+                        //所有选项
+                        itemSpans = $("#" + item.id).find(".filter_option span");
+                        //清除当前选中
+                        itemSpans.removeClass("selected");
+                        //清除自定义选中值
+                        _clearCustomValue(item);
+                        //清除选中值
+                        item.selected = [];
+
+                        if (!itemSet) {
+                            restoreToDefault(itemSpans, item);
+                        } else {
+                            var valueList = itemSet[settings.paramkey];
+                            var customValueList = itemSet[settings.paramCustomkey];
+                            if (valueList && valueList.length > 0) {
+                                //选项赋值
+                                for (var i = 0; i < valueList.length; i++) {
+                                    itemSpans.filter("[data-value='{0}']".format(valueList[i])).addClass("selected");
+                                    item.selected.push(valueList[i]);
+                                }
+                            } else if (customValueList && customValueList.length > 0) {
+                                //自定义选中赋值
+                                for (var i = 0; i < customValueList.length; i++) {
+                                    item.customSelectd.push(customValueList[i]);
+                                }
+                                _setCustomValue(item);
+                            } else {
+                                restoreToDefault(itemSpans, item);
+                            }
+                        }
+                    });
+                }
+
+                //还原单项到默认状态
+                function restoreToDefault(itemSpans, item) {
+                    //该选项还原默认值
+                    if (item.defaults.length == 0) {
+                        //选中全部
+                        itemSpans.filter(".option_all").addClass("selected");
+                    } else {
+                        for (var i = 0; i < item.defaults.length; i++) {
+                            itemSpans.filter("[data-value='{0}']".format(item.defaults[i])).addClass("selected");
+                            item.selected.push(item.defaults[i]);
+                        }
+                    }
+                }
+            }
             ////////////////////////////////////////私有方法////////////////////////////////////////
 
             return searchCtl.each(function () {
                 this.getParamList = _getParamList;
+                this.setValue = _setSearchValue;
                 this.isSeachBox = true;
             });
         },
@@ -1849,6 +1868,28 @@ Ywdsoft.Pub.AppFind = (function () {
             var that = this[0];
             if (that.isSeachBox) {
                 return that.getParamList();
+            }
+        },
+        /*
+         * 功能：    searchBox对外提供的调用函数
+         * 参数：    options {"setValue":[]}  key为要调用的函数名称 value:为函数调用参数
+         * 返回值：  函数返回值
+         * 创建人：  杜冬军
+         * 创建时间：2016-09-08
+        */
+        searchFunctionCall: function (options) {
+            if ($.isPlainObject(options)) {
+                var that = this[0];
+                if (that.isSeachBox) {
+                    for (var key in options) {
+                        if ($.isFunction(that[key])) {
+                            return that[key](options[key]);
+                        } else {
+                            console.error("查询插件searchBox不支持“{0}”方法".format(key));
+                            return null;
+                        }
+                    }
+                }
             }
         }
     });
@@ -2041,6 +2082,156 @@ jQuery.extend({
             var excelForm = document.getElementById("excelForm");
             excelForm.action = "/Excel/GridExport";
             excelForm.submit();
+        }
+    },
+    /*
+    * 功能：    根据业务类型下载导入数据得模版文件
+    * 参数：    type：业务类型 取值参照 Ywdsoft.Utility.Excel.ExcelImportType 枚举
+    * 返回值：  无
+    * 创建人：  焰尾迭
+    * 创建时间：2016-08-19
+    */
+    DownloadExcelTemplate: function (type) {
+        if (type == "undefined") {
+            return;
+        }
+        var param = { type: type };
+        $.download("/Excel/DownLoadTemplate", param, "get");
+    },
+    /*
+    * 功能：    根据业务类型下载导入数据得模版文件
+    * 参数：    options：
+                {
+                    type:业务类型, 取值参照 Ywdsoft.Utility.Excel.ExcelImportType 枚举
+                    FunctionCode:业务模块Code,
+                    Ext:可导入文件类型,
+                    ReturnDetailData:是否返回详细数据
+                    after:function(){}//回调函数
+                }
+    * 返回值：  无
+    * 创建人：  焰尾迭
+    * 创建时间：2016-08-22
+    */
+    ImportExcelTemplate: function (options) {
+        if ($.isPlainObject(options)) {
+            var defaults = {
+                ReturnDetailData: 0
+            };
+
+            var param = $.extend({}, defaults, options);
+
+            if (param.type != "undefined") {
+                //加载样式和js文件
+                $.loadFile("/Content/Css/plugins/webuploader/webuploader.css");
+                $.loadFile("/Content/Scripts/plugins/webuploader/webuploader.min.js");
+                if (!WebUploader.Uploader.support()) {
+                    var error = "上传控件不支持您的浏览器！请尝试升级flash版本或者使用Chrome引擎的浏览器。<a target='_blank' href='http://www.chromeliulanqi.com'>下载页面</a>";
+                    if (window.console) {
+                        window.console.log(error);
+                    }
+                    return;
+                }
+
+                var id = "ImportExcelTemplate{0}".format(param.type);
+                var modal = $("#" + id);
+                $(modal).remove();
+                var html =
+                    '<div class="modal" id="{0}">'.format(id) +
+                        '<div class="modal-dialog">' +
+                            '<div class="modal-content">' +
+                                '<div class="modal-header">' +
+                                    '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                                    '<h4 class="modal-title">Excel导入</h4>' +
+                                '</div>' +
+                                '<div class="modal-body">' +
+                                    '<div id="uploader" class="wu-example">' +
+                                        '<p style="font-weight:bold;">导入说明:</p><p class="pt5">导入文件为EXCEL格式，请先下载模板进行必要信息填写，模板下载<a href="javascript:;" onclick="$.DownloadExcelTemplate(\'{0}\')">请点击这里</a>！</p>'.format(param.type) +
+                                        '<div id="thelist" class="uploader-list"></div>' +
+                                        '<div class="uploader-wrap clearfix pb20">' +
+                                        '<input type="text" readonly class="form-control input-sm mr5 upload-file-name" style="width:300px;" />' +
+                                        '<div id="picker">选择文件</div>' +
+                                        '<button id="ctlBtn" class="btn btn-white btn-sm btn-start-uploader ml5" style="display:none;">开始上传</button>' +
+                                        '</div>'
+                '</div>' +
+            '</div></div></div></div>';
+                $(html).appendTo("body");
+                modal = $("#" + id);
+                var postData = { type: param.type, FunctionCode: param.FunctionCode, ReturnDetailData: param.ReturnDetailData };
+                var uploader = WebUploader.create({
+                    swf: '/Content/Scripts/plugins/webuploader/Uploader.swf',
+                    server: '/Excel/ImportTemplate?' + $.param(postData),
+                    pick: '#picker',
+                    accept: {
+                        title: 'excel',
+                        extensions: 'xls',
+                        mimeTypes: 'application/msexcel'
+                    },
+                    resize: false,
+                    fileSingleSizeLimit: 10 * 1024 * 1024,//10M
+                    duplicate: true
+                });
+
+                $("#ctlBtn").on('click', function () {
+                    uploader.upload();
+                });
+
+                // 当有文件被添加进队列的时候
+                uploader.on('fileQueued', function (file) {
+                    $("#thelist").html('<div id="' + file.id + '" class="item">' +
+                        '<div class="state"></div>' +
+                    '</div>');
+                    $(".upload-file-name").val(file.name);
+                    $(".btn-start-uploader").show();
+                });
+
+                // 文件上传过程中创建进度条实时显示。
+                uploader.on('uploadProgress', function (file, percentage) {
+                    var $li = $('#' + file.id),
+                        $percent = $li.find('.progress .progress-bar');
+
+                    // 避免重复创建
+                    if (!$percent.length) {
+                        $percent = $('<div class="progress progress-striped active">' +
+                          '<div class="progress-bar" role="progressbar" style="width: 0%">' +
+                          '</div>' +
+                        '</div>').appendTo($li).find('.progress-bar');
+                    }
+
+                    $li.find('.state').text('上传中');
+
+                    $percent.css('width', percentage * 100 + '%');
+                    $(".upload-file-name").val("");
+                    $(".btn-start-uploader").hide();
+                });
+
+                uploader.on('uploadSuccess', function (file, response) {
+                    if (response.IsSuccess) {
+                        $('#' + file.id).find('.state').html('<span class="label label-success">' + response.Message + '</span>');
+                        if ($.isFunction(param.after)) {
+                            param.after(response, modal);
+                        }
+                    } else {
+                        if (response.Message.indexOf("http://") >= 0) {
+                            $('#' + file.id).find('.state').html("上传的数据中存在错误数据，请点击<a class='red' href='{0}' target='_blank'>下载错误数据</a>！".format(response.Message));
+                        } else {
+                            $('#' + file.id).find('.state').html('<span class="label label-danger" title="' + response.Message + '">' + response.Message + '</span>');
+                        }
+                    }
+
+
+                });
+
+                uploader.on('uploadError', function (file, response) {
+                    console.log(response);
+                    $('#' + file.id).find('.state').text('上传出错');
+                });
+
+                uploader.on('uploadComplete', function (file) {
+                    $('#' + file.id).find('.progress').fadeOut(200);
+                });
+
+                modal.modal('show');
+            }
         }
     }
 });

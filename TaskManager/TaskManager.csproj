@@ -73,8 +73,9 @@
       <HintPath>..\packages\Common.Logging.Core.3.3.1\lib\net40\Common.Logging.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Enyim.Caching">
-      <HintPath>..\packages\EnyimMemcached.2.13\lib\net35\Enyim.Caching.dll</HintPath>
+    <Reference Include="Enyim.Caching, Version=2.16.0.0, Culture=neutral, PublicKeyToken=cec98615db04012e, processorArchitecture=MSIL">
+      <HintPath>..\packages\EnyimMemcached.2.16.0\lib\net35\Enyim.Caching.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Nancy, Version=1.4.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -86,9 +87,9 @@
     <Reference Include="Nancy.ViewEngines.Razor">
       <HintPath>..\packages\Nancy.Viewengines.Razor.1.4.3\lib\net40\Nancy.ViewEngines.Razor.dll</HintPath>
     </Reference>
-    <Reference Include="Quartz, Version=2.3.3.0, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Quartz.2.3.3\lib\net40\Quartz.dll</HintPath>
+    <Reference Include="Quartz, Version=2.4.1.0, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Quartz.2.4.1\lib\net40\Quartz.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration.Install" />
@@ -126,10 +127,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Ywdsoft.Task\Ywdsoft.Task.csproj">
-      <Project>{bab31070-da41-4eef-bbc0-659b6b2c7b43}</Project>
-      <Name>Ywdsoft.Task</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Ywdsoft.Utility\Ywdsoft.Utility.csproj">
       <Project>{d2aaedff-9f30-49a6-b242-f655503c24f3}</Project>
       <Name>Ywdsoft.Utility</Name>
@@ -173,8 +170,10 @@
   <PropertyGroup>
     <PostBuildEvent>rd/s/q $(TargetDir)Content
 rd/s/q $(TargetDir)Views
+rd/s/q $(TargetDir)Task
 xcopy $(SolutionDir)TaskManagerWeb\Content\*.* $(TargetDir)Content\ /s/d/r/y
 xcopy $(SolutionDir)TaskManagerWeb\Views\*.* $(TargetDir)Views\ /s/d/r/y
+xcopy $(SolutionDir)Ywdsoft.Task\$(OutDir)Ywdsoft.Task.dll $(TargetDir)Task\ /s/d/r/y
 </PostBuildEvent>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

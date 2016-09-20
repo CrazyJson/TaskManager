@@ -1,18 +1,15 @@
 ﻿using CsharpHttpHelper;
 using HtmlAgilityPack;
-using Ywdsoft.Task.Utils;
 using Ywdsoft.Utility;
 using Nancy.Hosting.Self;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Owin_Nancy;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
-using System.Net.Mail;
 using System.Text;
+using Ywdsoft.Utility.Mef;
+using Ywdsoft.Utility.ConfigHandler;
 
 namespace Ywdsoft.Test
 {
@@ -21,16 +18,26 @@ namespace Ywdsoft.Test
         static void Main(string[] args)
         {
             AdminRun.Run();
+            //1.MEF初始化
+            MefConfig.Init();
+
+            //2.
             ConfigInit.InitConfig();
+
+            //3.系统参数配置初始化
+            ConfigManager configManager = MefConfig.TryResolve<ConfigManager>();
+            configManager.Init();
+
+
             QuartzHelper.InitScheduler();
             QuartzHelper.StartScheduler();
             try
             {
-                string url = string.Format("http://127.0.0.1:{0}", SysConfig.WebPort);
                 //启动站点
-                using (NancyHost host = Startup.Start(SysConfig.WebPort))
+                using (NancyHost host = Startup.Start(SystemConfig.WebPort))
                 {
                     //调用系统默认的浏览器   
+                    string url = string.Format("http://127.0.0.1:{0}", SystemConfig.WebPort);
                     Process.Start(url);
                     Console.WriteLine("系统监听站点地址:{0}", url);
                     Console.WriteLine("程序已启动,按任意键退出");

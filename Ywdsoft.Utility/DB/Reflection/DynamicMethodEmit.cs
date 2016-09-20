@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Reflection.Emit;
 using System.Reflection;
 
 namespace Ywdsoft.Utility
 {
-	internal delegate object CtorDelegate();
+    internal delegate object CtorDelegate();
 
 	internal delegate object MethodDelegate(object target, object[] args);
 

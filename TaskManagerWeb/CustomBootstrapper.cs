@@ -16,8 +16,6 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using Ywdsoft.Utility;
 
 namespace Ywdsoft
@@ -27,6 +25,11 @@ namespace Ywdsoft
         protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
         {
             base.ApplicationStartup(container, pipelines);
+
+            //pipelines.BeforeRequest += ctx =>
+            //{
+            //    return null;
+            //};
 
             pipelines.AfterRequest += ctx =>
             {
@@ -59,6 +62,8 @@ namespace Ywdsoft
 
             ///静态文件夹访问 设置 css,js,image
             conventions.StaticContentsConventions.AddDirectory("Content");
+            //TempFile文件夹
+            conventions.StaticContentsConventions.AddDirectory("TempFile");
         }
 
         protected override void ConfigureApplicationContainer(TinyIoCContainer container)

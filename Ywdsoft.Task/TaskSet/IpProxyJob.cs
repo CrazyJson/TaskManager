@@ -4,8 +4,7 @@ using Newtonsoft.Json;
 using Quartz;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Ywdsoft.Utility.ConfigHandler;
 
 namespace Ywdsoft.Task.TaskSet
 {
@@ -22,11 +21,6 @@ namespace Ywdsoft.Task.TaskSet
         private static int ExecuteCount = 0;
 
         /// <summary>
-        /// 没执行5次任务切换代理IP
-        /// </summary>
-        private static int Speed = 5;
-
-        /// <summary>
         /// 是否需要切换代理ip
         /// </summary>
         private static bool NeedChangeIP = false;
@@ -40,41 +34,35 @@ namespace Ywdsoft.Task.TaskSet
         {
             try
             {
-                object objParam = context.JobDetail.JobDataMap.Get("TaskParam");
-                if (objParam != null)
+                DateTime start = DateTime.Now;
+                TaskLog.IpProxyLogInfo.WriteLogE("\r\n\r\n\r\n\r\n------------------爬虫开始执行获取代理ip任务 " + start.ToString("yyyy-MM-dd HH:mm:ss") + " BEGIN-----------------------------\r\n\r\n");
+
+
+                //每执行10次任务,换一个代理IP
+                if (NeedChangeIP || ExecuteCount % IpProxyConfig.Speed == 0)
                 {
-                    ProxyParam Param = JsonConvert.DeserializeObject<ProxyParam>(objParam.ToString());
-                    DateTime start = DateTime.Now;
-                    TaskLog.IpProxyLogInfo.WriteLogE("\r\n\r\n\r\n\r\n------------------爬虫开始执行获取代理ip任务 " + start.ToString("yyyy-MM-dd HH:mm:ss") + " BEGIN-----------------------------\r\n\r\n");
-
-
-                    //每执行10次任务,换一个代理IP
-                    if (NeedChangeIP || ExecuteCount % Speed == 0)
+                    if (NeedChangeIP)
                     {
-                        if (NeedChangeIP)
-                        {
-                            ExecuteCount = (ExecuteCount / Speed + 1) * Speed;
-                        }
-                        TaskLog.IpProxyLogInfo.WriteLogE("\r\n\r\n\r\n\r\n------------------开始解析使用的代理ip " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " BEGIN-----------------------------\r\n\r\n");
-                        ProxyIp = IpProxyGet.GetCorrectIP(Param);
-                        TaskLog.IpProxyLogInfo.WriteLogE("------------------保存使用的代理ip：" + ProxyIp + " -----------------------------");
-                        SQLHelper.ExecuteNonQuery("INSERT INTO dbo.p_ProxyIPUseHistory(ProxyIP,Type) VALUES (@ProxyIP,'IpProxyJob')", new { ProxyIP = ProxyIp });
-                        NeedChangeIP = false;
+                        ExecuteCount = (ExecuteCount / IpProxyConfig.Speed + 1) * IpProxyConfig.Speed;
                     }
-                    Param.ProxyIp = ProxyIp;
-                    TaskLog.IpProxyLogInfo.WriteLogE("\r\n\r\n\r\n\r\n------------------任务使用的代理ip:" + Param.ProxyIp + "----------------------------\r\n\r\n");
-
-                    List<IPProxy> list = IpProxyGet.ParseProxy(Param);
-                    if (list.Count == 0)
-                    {
-                        //没有返回数据.表示当前IP已经被锁定需要更换
-                        NeedChangeIP = true;
-                    }
-
-                    DateTime end = DateTime.Now;
-                    ExecuteCount++;
-                    TaskLog.IpProxyLogInfo.WriteLogE("\r\n\r\n------------------爬虫完成获取代理ip任务:" + end.ToString("yyyy-MM-dd HH:mm:ss") + ",本次共耗时(分):" + (end - start).TotalMinutes + " END------------------------\r\n\r\n\r\n\r\n");
+                    TaskLog.IpProxyLogInfo.WriteLogE("\r\n\r\n\r\n\r\n------------------开始解析使用的代理ip " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " BEGIN-----------------------------\r\n\r\n");
+                    ProxyIp = IpProxyGet.GetCorrectIP();
+                    TaskLog.IpProxyLogInfo.WriteLogE("------------------保存使用的代理ip：" + ProxyIp + " -----------------------------");
+                    SQLHelper.ExecuteNonQuery("INSERT INTO dbo.p_ProxyIPUseHistory(ProxyIP,Type) VALUES (@ProxyIP,'IpProxyJob')", new { ProxyIP = ProxyIp });
+                    NeedChangeIP = false;
                 }
+                TaskLog.IpProxyLogInfo.WriteLogE("\r\n\r\n\r\n\r\n------------------任务使用的代理ip:" + ProxyIp + "----------------------------\r\n\r\n");
+
+                List<IPProxy> list = IpProxyGet.ParseProxy(ProxyIp);
+                if (list.Count == 0)
+                {
+                    //没有返回数据.表示当前IP已经被锁定需要更换
+                    NeedChangeIP = true;
+                }
+
+                DateTime end = DateTime.Now;
+                ExecuteCount++;
+                TaskLog.IpProxyLogInfo.WriteLogE("\r\n\r\n------------------爬虫完成获取代理ip任务:" + end.ToString("yyyy-MM-dd HH:mm:ss") + ",本次共耗时(分):" + (end - start).TotalMinutes + " END------------------------\r\n\r\n\r\n\r\n");
             }
             catch (Exception ex)
             {

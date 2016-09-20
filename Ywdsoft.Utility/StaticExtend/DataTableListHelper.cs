@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Ywdsoft.Utility
 {
@@ -54,6 +52,10 @@ namespace Ywdsoft.Utility
                         if (pro.PropertyType.IsGenericType && pro.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>) && value != null)
                         {
                             pro.SetValue(t, Convert.ChangeType(value, Nullable.GetUnderlyingType(pro.PropertyType)), null);
+                        }
+                        else if (pro.PropertyType.IsEnum)
+                        {
+                            pro.SetValue(t, Convert.ChangeType(value, Enum.GetUnderlyingType(pro.PropertyType)), null);
                         }
                         else
                         {

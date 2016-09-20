@@ -5,14 +5,10 @@ using Ywdsoft.Utility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Configuration;
 using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
 using System.Net.NetworkInformation;
 using System.Threading;
-using System.Web;
+using Ywdsoft.Utility.ConfigHandler;
 
 namespace Ywdsoft.Task
 {
@@ -29,15 +25,15 @@ namespace Ywdsoft.Task
         //创建Httphelper对象
         private static HttpHelper http = new HttpHelper();
 
-        public static List<IPProxy> ParseProxy(ProxyParam Param)
+        public static List<IPProxy> ParseProxy(string ProxyIp)
         {
-            if (string.IsNullOrEmpty(Param.IPUrl))
+            if (string.IsNullOrEmpty(IpProxyConfig.IPUrl))
             {
                 throw new ArgumentNullException("ParseProxy函数参数空异常");
             }
 
             //总页数
-            int total = GetTotalPage(Param.IPUrl, Param.ProxyIp);
+            int total = GetTotalPage(IpProxyConfig.IPUrl, ProxyIp);
 
             //返回结果
             List<IPProxy> list = new List<IPProxy>();
@@ -67,7 +63,7 @@ namespace Ywdsoft.Task
                 table.Add("start", start);
                 table.Add("end", end);
                 table.Add("list", list);
-                table.Add("param", Param);
+                table.Add("param", ProxyIp);
                 threadParams.Add(table);
 
                 count += threadPqgeSize;
@@ -92,7 +88,7 @@ namespace Ywdsoft.Task
             }
             if (list.Count == 0)
             {
-                TaskLog.IpProxyLogInfo.WriteLogE("爬虫-代理ip任务", new Exception("没有获取到数据,可能当前ip(" + Param.ProxyIp + ")已被服务器封锁"));
+                TaskLog.IpProxyLogInfo.WriteLogE("爬虫-代理ip任务", new Exception("没有获取到数据,可能当前ip(" + ProxyIp + ")已被服务器封锁"));
             }
             else
             {
@@ -112,7 +108,7 @@ namespace Ywdsoft.Task
             int start = Convert.ToInt32(table["start"]);
             int end = Convert.ToInt32(table["end"]);
             List<IPProxy> list = table["list"] as List<IPProxy>;
-            ProxyParam Param = table["param"] as ProxyParam;
+            string ProxyIp = table["param"] as string;
 
             //页面地址
             string url = string.Empty;
@@ -124,9 +120,9 @@ namespace Ywdsoft.Task
             for (int i = start; i <= end; i++)
             {
                 TaskLog.IpProxyLogInfo.WriteLogE(string.Format("开始解析,页码{0}~{1},当前页码{2}", start, end, i));
-                url = string.Format("{0}/{1}", Param.IPUrl, i);
+                url = string.Format("{0}/{1}", IpProxyConfig.IPUrl, i);
                 var doc = new HtmlDocument();
-                doc.LoadHtml(GetHTML(url, Param.ProxyIp));
+                doc.LoadHtml(GetHTML(url, ProxyIp));
                 //获取所有数据节点tr
                 var trs = doc.DocumentNode.SelectNodes(@"//table[@id='ip_list']/tr");
                 if (trs != null && trs.Count > 1)
@@ -138,7 +134,7 @@ namespace Ywdsoft.Task
                         if (nodes != null && nodes.Count > 9)
                         {
                             ip = nodes[2].InnerText.Trim();
-                            if (Param.IsPingIp && !Ping(ip))
+                            if (IpProxyConfig.IsPingIp && !Ping(ip))
                             {
                                 continue;
                             }
@@ -284,7 +280,7 @@ namespace Ywdsoft.Task
         /// </summary>
         /// <param name="Param">爬取参数</param>
         /// <returns>正确的代理ip</returns>
-        public static string GetCorrectIP(ProxyParam Param)
+        public static string GetCorrectIP()
         {
             string ProxyIp = string.Empty;
             string tempProxyIp = string.Empty;
@@ -307,7 +303,7 @@ namespace Ywdsoft.Task
                 {
                     tempProxyIp = GetIP(dr["IP"].ToString(), dr["Port"].ToString());
                     TaskLog.IpProxyLogInfo.WriteLogE("当前IP:" + tempProxyIp);
-                    if (Ping(dr["IP"].ToString()) && GetTotalPage(Param.IPUrl, tempProxyIp) > 1)
+                    if (Ping(dr["IP"].ToString()) && GetTotalPage(IpProxyConfig.IPUrl, tempProxyIp) > 1)
                     {
                         ProxyIp = tempProxyIp;
                         break;
@@ -317,7 +313,7 @@ namespace Ywdsoft.Task
             }
             if (string.IsNullOrEmpty(ProxyIp))
             {
-                ProxyIp = Param.DefaultProxyIp;
+                ProxyIp = IpProxyConfig.DefaultProxyIp;
             }
             return ProxyIp;
         }
@@ -375,31 +371,5 @@ namespace Ywdsoft.Task
         /// </summary>
         public string VerifyTime { get; set; }
 
-    }
-
-    /// <summary>
-    /// 执行参数
-    /// </summary>
-    public class ProxyParam
-    {
-        /// <summary>
-        /// 提取代理ip站点地址
-        /// </summary>
-        public string IPUrl { get; set; }
-
-        /// <summary>
-        /// 请求站点默认使用的代理ip信息
-        /// </summary>
-        public string DefaultProxyIp { get; set; }
-
-        /// <summary>
-        /// 请求站点使用的代理ip信息
-        /// </summary>
-        public string ProxyIp { get; set; }
-
-        /// <summary>
-        /// 是否对获取的代理ip进行ping命令处理,确定该代理是否有效
-        /// </summary>
-        public bool IsPingIp { get; set; }
     }
 }

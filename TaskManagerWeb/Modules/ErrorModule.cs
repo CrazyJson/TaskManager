@@ -4,15 +4,10 @@
  * 创建日期: 2016/2/23 8:50:22 
  * 博客地址：http://yanweidie.cnblogs.com
  */
-using Nancy;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Ywdsoft.Modules
 {
-    public class ErrorModule : NancyModule
+    public class ErrorModule : BaseModule
     {
         public ErrorModule():base("Error")
         {

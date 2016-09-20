@@ -44,6 +44,7 @@
   <ItemGroup>
     <Content Include="代理IP爬虫SQL脚本\p_IPProxy.sql" />
     <Content Include="代理IP爬虫SQL脚本\p_ProxyIPUseHistory.sql" />
+    <Content Include="任务相关表\Configuration_Options.sql" />
     <Content Include="任务相关表\p_Task.sql" />
     <Content Include="任务系统SQL合并脚本_20150911.sql" />
     <Content Include="快递信息SQL脚本\p_ExpressCompany.sql" />

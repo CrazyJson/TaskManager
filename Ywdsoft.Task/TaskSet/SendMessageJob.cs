@@ -3,8 +3,6 @@ using Ywdsoft.Utility;
 using Quartz;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Ywdsoft.Task.TaskSet
 {

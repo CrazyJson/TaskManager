@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text;
-using NPOI.HPSF;
 using NPOI.HSSF.UserModel;
 using NPOI.HSSF.Util;
 using NPOI.SS.UserModel;
@@ -20,19 +18,7 @@ namespace Ywdsoft.Utility.Excel
         /// <summary>
         /// EXECL最大列宽
         /// </summary>
-        private static readonly int MAX_COLUMN_WIDTH = 100 * 256;
-        public static void ExportToFile(DataSet dataSet, string fileFullPath)
-        {
-            List<DataTable> dts = new List<DataTable>();
-            foreach (DataTable dt in dataSet.Tables) dts.Add(dt);
-            ExportToFile(dts, fileFullPath);
-        }
-        public static void ExportToFile(DataTable dataTable, string fileFullPath)
-        {
-            List<DataTable> dts = new List<DataTable>();
-            dts.Add(dataTable);
-            ExportToFile(dts, fileFullPath);
-        }
+        public static readonly int MAX_COLUMN_WIDTH = 100 * 256;
 
         /// <summary>
         /// 生成EXECL文件，通过读取DataTable和列头映射信息
@@ -160,95 +146,321 @@ namespace Ywdsoft.Utility.Excel
             return ms;
         }
 
-        public static void ExportToFile(IEnumerable<DataTable> dataTables, string fileFullPath)
-        {
-            IWorkbook workbook = new HSSFWorkbook();
-            int i = 0;
-            foreach (DataTable dt in dataTables)
-            {
-                string sheetName = string.IsNullOrEmpty(dt.TableName)
-                    ? "Sheet " + (++i).ToString()
-                    : dt.TableName;
-                ISheet sheet = workbook.CreateSheet(sheetName);
 
-                IRow headerRow = sheet.CreateRow(0);
-                for (int j = 0; j < dt.Columns.Count; j++)
+        /// <summary>
+        /// 获取第一个Sheet
+        /// </summary>
+        /// <param name="filePath">文件路径</param>
+        /// <returns>Sheet</returns>
+        public static ISheet GetFirstSheet(string filePath)
+        {
+            using (Stream stream = new MemoryStream(File.ReadAllBytes(filePath)))
+            {
+                IWorkbook workbook = new HSSFWorkbook(stream);
+                if (workbook.NumberOfSheets > 0)
                 {
-                    string columnName = string.IsNullOrEmpty(dt.Columns[j].ColumnName)
-                        ? "Column " + j.ToString()
-                        : dt.Columns[j].ColumnName;
-                    headerRow.CreateCell(j).SetCellValue(columnName);
+                    return workbook.GetSheetAt(0);
+                }
+            }
+            return null;
+        }
+
+        #region "Excel模版数据读取相关"
+
+        /// <summary>
+        /// 通过输入流初始化workbook
+        /// </summary>
+        /// <param name="ins">输入流</param>
+        /// <returns>workbook对象</returns>
+        public static IWorkbook InitWorkBook(Stream ins)
+        {
+            return new HSSFWorkbook(ins);
+        }
+
+        /// <summary>
+        /// 从excel第一个sheet中读取数据
+        /// </summary>
+        /// <param name="ins">输入流</param>
+        /// <param name="headRowIndex">标题行索引 默认为第6行</param>
+        /// <param name="fSheet">第一个sheet</param>
+        /// <returns>DataTable</returns>
+        public static DataTable GetDataFromExcel(Stream ins, out ISheet fSheet, int headRowIndex = 5)
+        {
+            IWorkbook workbook = InitWorkBook(ins);
+            fSheet = null;
+            DataTable dt = new DataTable();
+            if (workbook.NumberOfSheets > 0)
+            {
+                fSheet = workbook.GetSheetAt(0);
+                if (fSheet.LastRowNum < headRowIndex)
+                {
+                    throw new ArgumentException("Excel模版错误,标题行索引大于总行数");
                 }
 
-                for (int a = 0; a < dt.Rows.Count; a++)
+                //读取标题行
+                IRow row = null;
+                ICell cell = null;
+
+                row = fSheet.GetRow(headRowIndex);
+                object objColumnName = null;
+                for (int i = 0, length = row.LastCellNum; i < length; i++)
                 {
-                    DataRow dr = dt.Rows[a];
-                    IRow row = sheet.CreateRow(a + 1);
-                    for (int b = 0; b < dt.Columns.Count; b++)
+                    cell = row.GetCell(i);
+                    if (cell == null)
                     {
-                        row.CreateCell(b).SetCellValue(dr[b] != DBNull.Value ? dr[b].ToString() : string.Empty);
+                        continue;
+                    }
+                    objColumnName = GetCellVale(cell);
+                    if (objColumnName != null)
+                    {
+                        dt.Columns.Add(objColumnName.ToString());
+                    }
+                    else
+                    {
+                        dt.Columns.Add("");
+                    }
+                }
+
+                //读取数据行
+                object[] entityValues = null;
+                int columnCount = dt.Columns.Count;
+
+                for (int i = headRowIndex + 1, length = fSheet.LastRowNum; i < length; i++)
+                {
+                    row = fSheet.GetRow(i);
+                    if (row == null)
+                    {
+                        continue;
+                    }
+                    entityValues = new object[columnCount];
+                    //用于判断是否为空行
+                    bool isHasData = false;
+                    int dataColumnLength = row.LastCellNum < columnCount ? row.LastCellNum : columnCount;
+                    for (int j = 0; j < dataColumnLength; j++)
+                    {
+                        cell = row.GetCell(j);
+                        if (cell == null)
+                        {
+                            continue;
+                        }
+                        entityValues[j] = GetCellVale(cell);
+                        if (!isHasData && j < columnCount && entityValues[j] != null)
+                        {
+                            isHasData = true;
+                        }
+                    }
+                    if (isHasData)
+                    {
+                        dt.Rows.Add(entityValues);
                     }
                 }
             }
+            return dt;
+        }
 
-            using (FileStream fs = File.Create(fileFullPath))
+        /// <summary>
+        /// 设置excel模版错误信息
+        /// </summary>
+        /// <param name="sheet">数据标签</param>
+        /// <param name="rowindex">错误信息显示行</param>
+        /// <param name="msg">错误信息</param>
+        public static void SetTemplateErrorMsg(ISheet sheet, int rowindex, string msg)
+        {
+            IRow row = sheet.GetRow(rowindex);
+            row = sheet.CreateRow(rowindex);
+            if (row != null && !string.IsNullOrEmpty(msg))
             {
-                workbook.Write(fs);
+                sheet.AddMergedRegion(new CellRangeAddress(rowindex, rowindex, 0, row.LastCellNum));
+
+                ICell cell = row.GetCell(0);
+                if (cell == null)
+                {
+                    cell = row.CreateCell(0);
+                }
+                ICellStyle cellStyle = sheet.Workbook.CreateCellStyle();
+                cellStyle.VerticalAlignment = VerticalAlignment.CENTER;
+                cellStyle.Alignment = HorizontalAlignment.LEFT;
+                IFont font = sheet.Workbook.CreateFont();
+                font.FontHeightInPoints = 12;
+                font.Color = HSSFColor.RED.index;
+                cellStyle.SetFont(font);
+                cell.CellStyle = cellStyle;
+                cell.SetCellValue(msg);
             }
         }
 
         /// <summary>
-        /// 从EXECL中读取数据 转换成DataTable
-        /// 每个sheet页对应一个DataTable
+        /// 获取数据行的错误信息提示样式
         /// </summary>
-        /// <param name="xlsxFile">文件路径</param>
-        /// <returns></returns>
-        public static List<DataTable> GetDataTablesFrom(string xlsxFile)
+        /// <returns>错误数据行样式</returns>
+        public static ICellStyle GetErrorCellStyle(IWorkbook wb)
         {
-            if (!File.Exists(xlsxFile))
-                throw new FileNotFoundException("文件不存在");
-
-            List<DataTable> result = new List<DataTable>();
-            Stream stream = new MemoryStream(File.ReadAllBytes(xlsxFile));
-            IWorkbook workbook = new HSSFWorkbook(stream);
-            for (int i = 0; i < workbook.NumberOfSheets; i++)
-            {
-                DataTable dt = new DataTable();
-                ISheet sheet = workbook.GetSheetAt(i);
-                IRow headerRow = sheet.GetRow(0);
-
-                int cellCount = headerRow.LastCellNum;
-                for (int j = headerRow.FirstCellNum; j < cellCount; j++)
-                {
-                    DataColumn column = new DataColumn(headerRow.GetCell(j).StringCellValue);
-                    dt.Columns.Add(column);
-                }
-
-                int rowCount = sheet.LastRowNum;
-                for (int a = (sheet.FirstRowNum + 1); a < rowCount; a++)
-                {
-                    IRow row = sheet.GetRow(a);
-                    if (row == null) continue;
-
-                    DataRow dr = dt.NewRow();
-                    for (int b = row.FirstCellNum; b < cellCount; b++)
-                    {
-                        if (row.GetCell(b) == null) continue;
-                        dr[b] = row.GetCell(b).ToString();
-                    }
-
-                    dt.Rows.Add(dr);
-                }
-                result.Add(dt);
-            }
-            stream.Close();
-
-            return result;
+            ICellStyle cellStyle = wb.CreateCellStyle();
+            cellStyle.VerticalAlignment = VerticalAlignment.CENTER;
+            cellStyle.Alignment = HorizontalAlignment.LEFT;
+            IFont font = wb.CreateFont();
+            //font.FontHeightInPoints = 12;
+            font.Color = HSSFColor.RED.index;
+            cellStyle.SetFont(font);
+            return cellStyle;
         }
 
+        /// <summary>
+        /// 获取标题行的错误信息提示样式
+        /// </summary>
+        /// <returns>错误标题行样式</returns>
+        public static ICellStyle GetErrorHeadCellStyle(IWorkbook wb)
+        {
+            ICellStyle cellStyle = wb.CreateCellStyle();
+            cellStyle.VerticalAlignment = VerticalAlignment.CENTER;
+            cellStyle.Alignment = HorizontalAlignment.CENTER;
+            IFont font = wb.CreateFont();
+            font.Boldweight = short.MaxValue;
+            font.Color = HSSFColor.RED.index;
+            cellStyle.SetFont(font);
+            cellStyle.FillPattern = FillPatternType.SOLID_FOREGROUND;
+            return cellStyle;
+        }
+
+        /// <summary>
+        /// 获取单元格值
+        /// </summary>
+        /// <param name="cell">单元格</param>
+        /// <returns>单元格值</returns>
+        private static object GetCellVale(ICell cell)
+        {
+            object obj = null;
+            switch (cell.CellType)
+            {
+                case CellType.NUMERIC:
+                    if (DateUtil.IsCellDateFormatted(cell))
+                    {
+                        obj = cell.DateCellValue;
+                    }
+                    else
+                    {
+                        obj = cell.NumericCellValue;
+                    }
+                    break;
+                case CellType.STRING:
+                    obj = cell.StringCellValue;
+                    break;
+                case CellType.BOOLEAN:
+                    obj = cell.BooleanCellValue;
+                    break;
+                case CellType.FORMULA:
+                    obj = cell.CellFormula;
+                    break;
+
+            }
+            return obj;
+        }
+        #endregion
+
+        #region "设置下拉选项"
+        /// <summary>
+        /// 设置某些列的值只能输入预制的数据,显示下拉框
+        /// </summary>
+        /// <param name="sheet">要设置的sheet</param>
+        /// <param name="textlist">下拉框显示的内容</param>
+        /// <param name="firstRow">开始行</param>
+        /// <param name="firstCol">开始列</param>
+        /// <returns>设置好的sheet</returns>
+        public static ISheet SetHSSFValidation(ISheet sheet,
+                string[] textlist, int firstRow, int firstCol)
+        {
+            return SetHSSFValidation(sheet, textlist, firstRow, sheet.LastRowNum, firstCol, firstCol);
+        }
+
+        /// <summary>
+        /// 设置某些列的值只能输入预制的数据,显示下拉框
+        /// </summary>
+        /// <param name="sheet">要设置的sheet</param>
+        /// <param name="textlist">下拉框显示的内容</param>
+        /// <param name="firstRow">开始行</param>
+        /// <param name="endRow">结束行</param>
+        /// <param name="firstCol">开始列</param>
+        /// <param name="endCol">结束列</param>
+        /// <returns>设置好的sheet</returns>
+        public static ISheet SetHSSFValidation(ISheet sheet,
+                string[] textlist, int firstRow, int endRow, int firstCol,
+                int endCol)
+        {
+            IWorkbook workbook = sheet.Workbook;
+            if (endRow > sheet.LastRowNum)
+            {
+                endRow = sheet.LastRowNum;
+            }
+            ISheet hidden = null;
+
+            string hiddenSheetName = "hidden" + sheet.SheetName;
+            int hIndex = workbook.GetSheetIndex(hiddenSheetName);
+            if (hIndex < 0)
+            {
+                hidden = workbook.CreateSheet(hiddenSheetName);
+                workbook.SetSheetHidden(sheet.Workbook.NumberOfSheets - 1, SheetState.HIDDEN);
+            }
+            else
+            {
+                hidden = workbook.GetSheetAt(hIndex);
+            }
+
+            IRow row = null;
+            ICell cell = null;
+            for (int i = 0, length = textlist.Length; i < length; i++)
+            {
+                row = hidden.GetRow(i);
+                if (row == null)
+                {
+                    row = hidden.CreateRow(i);
+                }
+                cell = row.GetCell(firstCol);
+                if (cell == null)
+                {
+                    cell = row.CreateCell(firstCol);
+                }
+                cell.SetCellValue(textlist[i]);
+            }
+
+            // 加载下拉列表内容  
+            string nameCellKey = hiddenSheetName + firstCol;
+            IName namedCell = workbook.GetName(nameCellKey);
+            if (namedCell == null)
+            {
+                namedCell = workbook.CreateName();
+                namedCell.NameName = nameCellKey;
+                namedCell.RefersToFormula = string.Format("{0}!${1}$1:${1}${2}", hiddenSheetName, NumberToChar(firstCol + 1), textlist.Length);
+            }
+            DVConstraint constraint = DVConstraint.CreateFormulaListConstraint(nameCellKey);
+
+            // 设置数据有效性加载在哪个单元格上,四个参数分别是：起始行、终止行、起始列、终止列  
+            CellRangeAddressList regions = new CellRangeAddressList(firstRow, endRow, firstCol, endCol);
+            // 数据有效性对象  
+            HSSFDataValidation validation = new HSSFDataValidation(regions, constraint);
+            //// 取消弹出错误框
+            //validation.ShowErrorBox = false;
+            sheet.AddValidationData(validation);
+            return sheet;
+        }
+        #endregion
 
         #region "私有方法"
-
+        /// 
+        /// 把1,2,3,...,35,36转换成A,B,C,...,Y,Z
+        /// 
+        /// 要转换成字母的数字（数字范围在闭区间[1,36]）
+        /// 
+        private static string NumberToChar(int number)
+        {
+            if (1 <= number && 36 >= number)
+            {
+                int num = number + 64;
+                System.Text.ASCIIEncoding asciiEncoding = new System.Text.ASCIIEncoding();
+                byte[] btNumber = new byte[] { (byte)num };
+                return asciiEncoding.GetString(btNumber);
+            }
+            return "A";
+        }
         #endregion
     }
 

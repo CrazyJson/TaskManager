@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
 using System.Reflection;
 using System.Collections;
 
 namespace Ywdsoft.Utility
 {
-	/// <summary>
-	/// 定义读属性操作的接口
-	/// </summary>
-	internal interface IGetValue
+    /// <summary>
+    /// 定义读属性操作的接口
+    /// </summary>
+    internal interface IGetValue
 	{
 		object Get(object target);
 	}

@@ -1,8 +1,9 @@
 ﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase
-@{
-    ViewBag.Title = "开源任务管理平台TaskManager-首页";
 
+@{
+    ViewBag.Title = @Model;
 }
+
 @section style{
     <link rel="stylesheet" href="~/Content/Css/index.css" />
 }
@@ -31,14 +32,15 @@
                     <li><a href="javascript:void(0)" class="navBar" data-url="/Task/Grid">任务管理<span class="arr_r fr"></span></a></li>
                 </ul>
             </li>
-            <li class="menu_a">
+            @*<li class="menu_a">
                 <a href="javascript:void(0)"><i class="fa fa-user"></i>账号管理</a>
                 <ul class="menu_b">
                 </ul>
-            </li>
+            </li>*@
             <li class="menu_a">
-                <a href="javascript:void(0)"><i class="fa fa-bar-chart"></i>数据分析</a>
+                <a href="javascript:void(0)"><i class="fa fa-gear"></i>系统管理</a>
                 <ul class="menu_b">
+                    <li><a href="javascript:void(0)" class="navBar" data-url="/Config/Grid">参数配置<span class="arr_r fr"></span></a></li>
                 </ul>
             </li>
         </ul>

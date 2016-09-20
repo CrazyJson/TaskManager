@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Quartz;
 using System.Collections.Specialized;
 using Quartz.Impl;
-using System.Data;
 using Quartz.Impl.Triggers;
-using System.Collections;
-using Quartz.Impl.Calendar;
 using Quartz.Spi;
 using System.Reflection;
 using Ywdsoft.Utility.Quartz;
 using Quartz.Impl.Matchers;
+using System.IO;
 
 namespace Ywdsoft.Utility
 {
@@ -24,6 +21,11 @@ namespace Ywdsoft.Utility
         private QuartzHelper() { }
 
         private static object obj = new object();
+
+        /// <summary>
+        /// 任务程序集根目录
+        /// </summary>
+        private static string TASK_ROOT_PATH = FileHelper.GetRootPath() + "Task";
 
         /// <summary>
         /// 缓存任务所在程序集信息
@@ -146,8 +148,6 @@ namespace Ywdsoft.Utility
                 trigger.CronExpressionString = taskUtil.CronExpressionString;
                 trigger.Name = taskUtil.TaskID.ToString();
                 trigger.Description = taskUtil.TaskName;
-                //添加任务执行参数
-                job.JobDataMap.Add("TaskParam", taskUtil.TaskParam);
                 scheduler.ScheduleJob(job, trigger);
                 if (taskUtil.Status == TaskStatus.STOP)
                 {
@@ -181,6 +181,11 @@ namespace Ywdsoft.Utility
             {
                 //任务已经存在则暂停任务
                 scheduler.PauseJob(jk);
+                var jobDetail = scheduler.GetJobDetail(jk);
+                if (jobDetail.JobType.GetInterface("IInterruptableJob") != null)
+                {
+                    scheduler.Interrupt(jk);
+                }
                 LogHelper.WriteLog(string.Format("任务“{0}”已经暂停", JobKey));
             }
         }
@@ -200,6 +205,23 @@ namespace Ywdsoft.Utility
             }
         }
 
+        /// <summary>
+        ///立即运行一次任务
+        /// </summary>
+        /// <param name="JobKey">任务key</param>
+        public static void RunOnceTask(string JobKey)
+        {
+            JobKey jk = new JobKey(JobKey);
+            if (scheduler.CheckExists(jk))
+            {
+                var jobDetail = scheduler.GetJobDetail(jk);
+                var type = jobDetail.JobType;
+                var instance = type.FastNew();
+                var method = type.GetMethod("Execute");
+                method.Invoke(instance, new object[] { null });
+                LogHelper.WriteLog(string.Format("任务“{0}”立即运行", JobKey));
+            }
+        }
         /// 获取类的属性、方法  
         /// </summary>  
         /// <param name="assemblyName">程序集</param>  
@@ -208,12 +230,14 @@ namespace Ywdsoft.Utility
         {
             try
             {
-                assemblyName = FileHelper.GetAbsolutePath(assemblyName + ".dll");
+                string assemblyPath = string.Format("{0}\\{1}.dll", TASK_ROOT_PATH, assemblyName);
+                string HashCode = FileHelper.GetFileHash(assemblyPath);
                 Assembly assembly = null;
-                if (!AssemblyDict.TryGetValue(assemblyName, out assembly))
+                if (!AssemblyDict.TryGetValue(HashCode, out assembly))
                 {
-                    assembly = Assembly.LoadFrom(assemblyName);
-                    AssemblyDict[assemblyName] = assembly;
+                    //修改程序集Assembly.LoadForm 导致程序集被占用问题
+                    assembly = Assembly.Load(File.ReadAllBytes(assemblyPath));
+                    AssemblyDict[HashCode] = assembly;
                 }
                 Type type = assembly.GetType(className, true, true);
                 return type;

@@ -5,9 +5,7 @@ using log4net.Layout;
 using log4net.Repository;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace Ywdsoft.Utility
@@ -195,7 +193,8 @@ namespace Ywdsoft.Utility
         /// <date>2015-09-22</date>
         private static void LoadFileAppender(ILoggerRepository repository)
         {
-            string txtLogPath = FileHelper.GetAbsolutePath(string.Format("/Logs/{0}.log", repository.Name));
+            //string txtLogPath = FileHelper.GetAbsolutePath(string.Format("/Logs/{0}.log", repository.Name));
+            string txtLogPath = string.Format(@"Logs\{0}\", repository.Name);
             RollingFileAppender fileAppender = new RollingFileAppender();
             fileAppender.Name = "LogFileAppender";
             fileAppender.File = txtLogPath;
@@ -203,6 +202,9 @@ namespace Ywdsoft.Utility
             fileAppender.MaxSizeRollBackups = 100;
             fileAppender.MaximumFileSize = "1MB";
             fileAppender.RollingStyle = log4net.Appender.RollingFileAppender.RollingMode.Size;
+            fileAppender.DatePattern = "yyyyMMddHH'.log'";
+            fileAppender.StaticLogFileName = false;
+            fileAppender.RollingStyle = RollingFileAppender.RollingMode.Date;
 
             PatternLayout patternLayout = new PatternLayout();
             patternLayout.ConversionPattern = "%-5p %d [%c] %m%n";

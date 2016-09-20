@@ -6,14 +6,11 @@
  * 博客地址：http://yanweidie.cnblogs.com
  */
 using Nancy;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Ywdsoft.Utility.ConfigHandler;
 
 namespace Ywdsoft.Modules
 {
-    public class HomeModule : NancyModule
+    public class HomeModule : BaseModule
     {
         public HomeModule()
         {
@@ -26,7 +23,7 @@ namespace Ywdsoft.Modules
             //主页
             Get["/Home/Index"] = r =>
             {
-                var model = "我是 Razor 引擎";
+                var model = SystemConfig.SystemTitle;
                 return View["index", model];
             };
 

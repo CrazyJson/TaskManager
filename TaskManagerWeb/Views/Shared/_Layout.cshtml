@@ -21,9 +21,12 @@
 <body>
     @RenderBody()
 
-    <script src="~/Content/Scripts/jquery-1.9.0.min.js"></script>
+    <script src="~/Content/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Content/Scripts/bootstrap.min.js"></script>
     <!--layer-->
     <script src="~/Content/Scripts/plugins/layer/layer.min.js"></script>
+    <!-- 自定义 -->
+    <script src="~/Content/Scripts/framework.js?ver=@ViewBag.Version"></script>
     @RenderSection("scripts", required: false)
 
     <!--输出get请求参数到隐藏控件中，js中可以通过__a.value 形式来获取url参数 -->

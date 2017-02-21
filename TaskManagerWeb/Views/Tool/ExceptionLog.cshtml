@@ -1,0 +1,89 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase
+@{
+    ViewBag.Title = "异常消息";
+}
+
+@section style{
+    <style>
+        body {
+            overflow: hidden;
+        }
+    </style>
+}
+<div style="width:100%;z-index:500;" id="content-header">
+    <table class="table table-bordered" style="margin-bottom:0;">
+        <colgroup>
+            <col style="width: 80px;" />
+            <col />
+            <col style="width: 80px;" />
+        </colgroup>
+        <tr style="height: 38px; background-color: #dff0d8;">
+            <td colspan="3" style="font-weight: bold;">
+                异常消息
+                <button class="btn btn-info btn-xs" style="float:right;margin-right:20px;" id="btn_Clear">清空消息</button>
+            </td>
+        </tr>
+        <tr style="height: 38px; background-color: #fcf8e3;">
+            <th class="ta-c">序号</th>
+            <th class="ta-c">消息内容</th>
+            <th class="ta-c">操作</th>
+        </tr>
+    </table>
+</div>
+<div id="content-wrap">
+    <table class="table table-bordered" style="border-top:none;">
+        <colgroup>
+            <col style="width: 80px;" />
+            <col />
+            <col style="width: 80px;" />
+        </colgroup>
+        @{ int i = 1; string firstBorder = "border-top:none;"; }
+        @foreach (long key in Model.Keys)
+            {
+            <tr>
+                <td style='text-align:center;@if (i == 1) { @firstBorder }'>@i</td>
+                <td style='padding-right:10px;white-space: pre;@if (i == 1) { @firstBorder }'>@Html.Raw(Model[key])</td>
+                <td style='text-align:center;@if (i == 1) { @firstBorder }'><a href="javascript:void(0)" class="action-delete" data-index="@key" title="删除">删除</a></td>
+            </tr>
+            i++;
+        }
+    </table>
+</div>
+@section scripts{
+    <script type="text/javascript" src="~/Content/Scripts/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script>
+        $(function () {
+            $('#content-wrap').slimScroll({
+                height: $(window).height() - $("#content-header").height()
+            });
+
+            $(".action-delete").on("click", function () {
+                var index = $(this).attr("data-index");
+                deleteException('Delete', index);            
+            });
+
+            $("#btn_Clear").on("click", function () {
+                deleteException('Clear');
+            });
+
+            function deleteException(type,index) {
+                var index;
+                $.ajax({
+                    type: "get",
+                    url: "/Tool/DeleteException",
+                    data: { "Type": type, "Index": index },
+                    beforeSend: function () {
+                        //加载等待层
+                        index = layer.load(0);
+                    },
+                    complete: function () {
+                        layer.close(index);
+                    },
+                    success: function (data) {
+                        window.location.reload();
+                    }
+                });
+            }
+        });
+    </script>
+}

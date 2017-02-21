@@ -12,11 +12,54 @@
         .Dnamelink {vertical-align: middle;border-bottom: 1px dashed #ddd;padding: 12px;padding-left: 20px;width: 33%;float: left;}
         .Dcontent {margin-bottom: 30px;}
         a {color: #4a4a4a;}
+        .vals-container {
+            margin-top:10px;
+            margin-bottom:10px;
+            padding:0 10px 5px 10px;
+            border-radius:5px;
+            min-height:36px;
+            user-select:none;
+            -webkit-user-select:none;
+        }
+        .bg-theme-2 {
+            background:#f3f6fa;
+            border: 1px #ddd solid;
+        }
+        .list-label {
+            padding:4px 10px;
+            border-radius:4px;
+            display:inline-block;
+            margin:5px 10px 0 0;
+            user-select:none;
+            background:#dbdcdd;
+            -webkit-user-select:none;
+        }
+        .list-label>.action-delete {
+            cursor:pointer;
+            color:#06c;
+        }
+        .action-delete{
+            margin-left:5px;
+        }
+        .searchbox{
+            height:auto;
+            border:none !important;
+        }
     </style>
 }
 
 
 <div class="row-fluid clearfix m10 mt0 ml0">
+    <div class="searchbox">
+        <div class="searchbox-item mb10 un-select undis" id="tagContainer">
+            <div class="l">分组标签<i></i></div>
+            <div class="c" style="height:auto;">
+                <div class="control-type">(单选)</div>
+                <div class="filter_option" id="TagsCloud" style="padding-right:20px;">
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row-fluid clearfix">
         <div class="col-sm-4 pl0">
             <div class="input-group">
@@ -61,18 +104,27 @@
     </div>
 </script>
 
+<script id="Config_Tag" type="text/html">
+    <span title="全部" class="option_all {{if !TagName}}selected{{/if}}">全部</span>
+    {{ each TagList as item i}}
+    {{if i<35}}
+    <span title="{{item.TagName}}" data-text="{{item.TagName}}" data-id="{{item.TagGUID}}" {{if item.TagName==TagName}} class="selected" {{/if}}>{{item.TagName}}</span>
+    {{/if}}
+    {{/each}}
+</script>
+
 <script id="Config_Detail" type="text/html">
     {{ each ListOptions as item i}}
     <div class="form-group">
-        <label class="col-sm-3 control-label">{{if item.Required}}<span style="color:red;">*</span>{{/if}}{{item.OptionName}}：</label>
+        <label class="col-sm-3 control-label" {{if item.Title}} title="{{item.Title}}" {{/if}}>{{if item.Required}}<span style="color:red;">*</span>{{/if}}{{item.OptionName}}：</label>
         <div class="col-sm-8">
             {{if item.ValueType==3}}
             <div class="radio i-checks">
                 <label class="radio2">
-                    <input type="radio" {{if item.Value && item.Value.toLowerCase()=="true"}} checked="checked" {{/if}} value="true" name="{{item.Key}}" ValueType="{{item.ValueType}}" OptionName="{{item.OptionName}}" {{if item.Title}} title="{{item.Title}}" {{/if}}><i></i>是
+                    <input type="radio" {{if item.Value && item.Value.toLowerCase()=="true"}} checked="checked" {{/if}} value="true" name="{{item.Key}}" ValueType="{{item.ValueType}}" OptionName="{{item.OptionName}}"><i></i>是
                 </label>
                 <label class="radio2">
-                    <input type="radio" {{if item.Value && item.Value.toLowerCase()=="false"}} checked="checked" {{/if}} value="false" name="{{item.Key}}" ValueType="{{item.ValueType}}" OptionName="{{item.OptionName}}" {{if item.Title}} title="{{item.Title}}" {{/if}}><i></i>否
+                    <input type="radio" {{if item.Value && item.Value.toLowerCase()=="false"}} checked="checked" {{/if}} value="false" name="{{item.Key}}" ValueType="{{item.ValueType}}" OptionName="{{item.OptionName}}"><i></i>否
                 </label>
             </div>
             {{else if item.ValueType==5}}
@@ -83,6 +135,23 @@
         </div>
     </div>
     {{/each}}
+    <div class="vals-container bg-theme-2 {{if TagList.length==0}}undis{{/if}}" id="ListLabelCloud">
+        {{each TagList as Tag}}
+        <span class="list-label" data-TagId="{{Tag.TagGUID}}">{{Tag.TagName}}<a href="javascript:;" class="action-delete fa fa-times"></a></span>
+        {{/each}}
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">自定义标签：</label>
+        <div class="col-sm-8">
+            <div class="input-group">
+                <input type="text" class="form-control" id="labelText" maxlength="20"> <span class="input-group-btn">
+                    <button type="button" class="btn btn-primary" id="btn-addLabel">
+                        添加标签
+                    </button>
+                </span>
+            </div>
+        </div>
+    </div>
     <div class="form-group">
         <label class="col-sm-3 control-label">立即应用：</label>
         <div class="col-sm-8">

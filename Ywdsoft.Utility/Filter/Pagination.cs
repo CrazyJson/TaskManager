@@ -66,7 +66,7 @@ namespace Ywdsoft.Utility
             return list;
         }
         #endregion
-    
+
         /// <summary>
         /// 分页查询
         /// </summary>
@@ -93,19 +93,14 @@ namespace Ywdsoft.Utility
                 {
                     throw new ArgumentNullException("调用函数QueryBase时参数sql为空");
                 }
-
-
                 Hashtable result = new Hashtable();
                 string newSql = string.Empty;
-
-
-
 
                 if (gridParam.IsPagination)
                 {
                     PageIndex = PageIndex < 0 ? 0 : PageIndex;
-                    newSql = "SELECT * FROM (SELECT T.*,ROW_NUMBER() OVER({0}) AS LIMIT_ROWNUMBER__ FROM({1})T WHERE {4} ) T where LIMIT_ROWNUMBER__ BETWEEN {2} AND {3}";
-                    newSql = String.Format(newSql, sortSQL, sql, PageIndex * PageSize, (PageIndex + 1) * PageSize, filter);
+                    newSql = "SELECT T.* FROM({1})T WHERE {4} {0}  limit {2} offset {3}";
+                    newSql = string.Format(newSql, sortSQL, sql, PageSize, PageIndex * PageSize, filter);
                     if (gridParam.IsPagination && gridParam.IsCalcTotal)
                     {
                         result["total"] = SQLHelper.ExecuteScalar<int>(String.Format("SELECT COUNT(1) FROM ({0}) A WHERE {1}", sql, filter), htArgs);
@@ -115,7 +110,7 @@ namespace Ywdsoft.Utility
                 {
                     newSql = string.Format("SELECT T.* FROM ({1}) T where {2} {0}", sortSQL, sql, filter);
                 }
-                List<T> list= SQLHelper.ToList<T>(newSql, htArgs);
+                List<T> list = SQLHelper.ToList<T>(newSql, htArgs);
                 if (!gridParam.IsPagination || !gridParam.IsCalcTotal)
                 {
                     result["total"] = list.Count;
@@ -180,7 +175,7 @@ namespace Ywdsoft.Utility
                         continue;
                     }
                     //匹配枚举，防止SQL注入
-                    Operator operatorEnum = (Operator)Enum.Parse(typeof(Operator), item.Operator,true);
+                    Operator operatorEnum = (Operator)Enum.Parse(typeof(Operator), item.Operator, true);
 
                     //跳过字段值为空的
                     if (operatorEnum != Operator.Null && operatorEnum != Operator.NotNull && string.IsNullOrEmpty(item.FieldValue))

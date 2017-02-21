@@ -13,6 +13,8 @@
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,15 +42,23 @@
       <HintPath>..\packages\Common.Logging.Core.3.3.1\lib\net40\Common.Logging.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Dapper, Version=1.50.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.1.50.2\lib\net40\Dapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="HttpHelper">
-      <HintPath>..\TaskManager\DLL\HttpHelper.dll</HintPath>
+      <HintPath>..\YwdSoft.ConsoleHosting\DLL\HttpHelper.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Ionic.Zip, Version=1.9.1.5, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
       <HintPath>..\packages\NPOI.1.2.5\lib\net40\Ionic.Zip.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\packages\log4net.2.0.5\lib\net40-full\log4net.dll</HintPath>
+    <Reference Include="log4net, Version=2.0.7.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.7\lib\net40-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -67,12 +77,22 @@
       <HintPath>..\packages\Quartz.2.4.1\lib\net40\Quartz.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="RabbitMQ.Client, Version=3.5.7.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL">
+      <HintPath>..\packages\RabbitMQ.Client.3.5.7\lib\net40\RabbitMQ.Client.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Services.Client" />
+    <Reference Include="System.Data.SQLite, Version=1.0.104.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Core.1.0.104.0\lib\net40\System.Data.SQLite.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Management" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -81,27 +101,45 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Admin\AdminRun.cs" />
+    <Compile Include="Admin\MachineNumber.cs" />
     <Compile Include="Auth\UserInfo.cs" />
+    <Compile Include="Auth\UserService.cs" />
+    <Compile Include="Command\WebResourceUpdateCommand.cs" />
+    <Compile Include="Command\RestartCommand.cs" />
+    <Compile Include="Command\LogCommand.cs" />
+    <Compile Include="Command\PortCommand.cs" />
+    <Compile Include="Command\HelpCommand.cs" />
+    <Compile Include="Command\ExitCommand.cs" />
+    <Compile Include="Command\HttpCommand.cs" />
+    <Compile Include="Command\ClsCommand.cs" />
+    <Compile Include="Command\ICommand.cs" />
+    <Compile Include="Command\CommandHelp.cs" />
     <Compile Include="ConfigHandler\ConfigAttribute.cs" />
     <Compile Include="ConfigHandler\ConfigDescription.cs" />
     <Compile Include="ConfigHandler\ConfigManager.cs" />
     <Compile Include="ConfigHandler\ConfigOption.cs" />
     <Compile Include="ConfigHandler\ConfigTypeAttribute.cs" />
-    <Compile Include="ConfigHandler\Config\EmailConfig.cs" />
-    <Compile Include="ConfigHandler\Config\ExpressProgressConfig.cs" />
-    <Compile Include="ConfigHandler\Config\IpProxyConfig.cs" />
+    <Compile Include="ConfigHandler\Config\RabbitConfig.cs" />
+    <Compile Include="ConfigHandler\Config\TaskConfig.cs" />
     <Compile Include="ConfigHandler\Config\SystemConfig.cs" />
     <Compile Include="ConfigHandler\IConfigService.cs" />
     <Compile Include="ConfigHandler\Options.cs" />
     <Compile Include="Config\ConfigInit.cs" />
     <Compile Include="Config\SysConfig.cs" />
+    <Compile Include="DB\ConvertExt.cs" />
+    <Compile Include="DB\DapperHelper.cs" />
     <Compile Include="DB\DbHelper.cs" />
     <Compile Include="DB\Reflection\DynamicMethodEmit.cs" />
     <Compile Include="DB\Reflection\MethodWrapper.cs" />
     <Compile Include="DB\Reflection\PropertyWrapper.cs" />
     <Compile Include="DB\Reflection\ReflectionExtensions.cs" />
     <Compile Include="DB\SQLHelper.cs" />
+    <Compile Include="DB\Xml\MyCDATA.cs" />
+    <Compile Include="DB\Xml\XmlCommandItem.cs" />
+    <Compile Include="DB\Xml\XmlCommandManager.cs" />
+    <Compile Include="DB\Xml\XmlHelper.cs" />
     <Compile Include="Encrypt\DESEncrypt.cs" />
+    <Compile Include="EntityCode\EntityCodeHelper.cs" />
     <Compile Include="Enum\EnumHelper.cs" />
     <Compile Include="Excel\ColumnInfo.cs" />
     <Compile Include="Excel\ExcelImporMapper.cs" />
@@ -110,7 +148,7 @@
     <Compile Include="Excel\ExcelUtil.cs" />
     <Compile Include="Excel\NpoiHelper.cs" />
     <Compile Include="File\FileHelper.cs" />
-    <Compile Include="Filter\JsonBaseModel.cs" />
+    <Compile Include="Filter\ApiResult.cs" />
     <Compile Include="Filter\Pagination.cs" />
     <Compile Include="Filter\QueryCondition.cs" />
     <Compile Include="Http\MimeHelper.cs" />
@@ -121,13 +159,16 @@
     <Compile Include="Quartz\CustomTriggerListener.cs" />
     <Compile Include="Quartz\QuartzHelper.cs" />
     <Compile Include="Quartz\TaskUtil.cs" />
+    <Compile Include="RabbitMQ\MessageTransmit.cs" />
+    <Compile Include="RabbitMQ\MessageTransmitAction.cs" />
+    <Compile Include="RabbitMQ\RabbitMQClient.cs" />
     <Compile Include="Regex\RegexHelper.cs" />
-    <Compile Include="SMS\SmsHelper.cs" />
-    <Compile Include="SMS\MessageHelper.cs" />
-    <Compile Include="SMS\MailHelper.cs" />
     <Compile Include="StaticExtend\DataTableListHelper.cs" />
     <Compile Include="StaticExtend\StringExt.cs" />
+    <Compile Include="Tags\ITagService.cs" />
+    <Compile Include="Tags\TagsSourceType.cs" />
     <Compile Include="Time\TimeHelper.cs" />
+    <Compile Include="Zip\SharpZip.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -138,8 +179,26 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Dapper.SimpleCRUD\Dapper.SimpleCRUD.csproj">
+      <Project>{b8dffa5b-823e-48f2-b271-8374438f40be}</Project>
+      <Name>Dapper.SimpleCRUD</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ywdsoft.Model\Ywdsoft.Model.csproj">
+      <Project>{8f936e5f-f5f4-43a4-8624-dab5d4128049}</Project>
+      <Name>Ywdsoft.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  <Import Project="..\packages\System.Data.SQLite.Core.1.0.104.0\build\net40\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.104.0\build\net40\System.Data.SQLite.Core.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.104.0\build\net40\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.104.0\build\net40\System.Data.SQLite.Core.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

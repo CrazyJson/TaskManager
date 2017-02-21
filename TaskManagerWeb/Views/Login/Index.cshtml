@@ -1,0 +1,67 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase
+
+@{
+    ViewBag.Title = "登录-" + @Model.Title;
+}
+
+@section style{
+    <link rel="stylesheet" href="~/Content/Css/login.css" />
+
+}
+<div class="layout login_wrap">
+    <h2>@Model.ProgramName</h2>
+    <form action="/Login" method="post" onsubmit="return checkAcount()">
+        <div class="login_box teacher">
+            <div class="head">
+                <div class="t_head login_ico"></div>
+            </div>
+            <div class="login_area">
+                <ul>
+                    <li class="clear user">
+                        <span class="fl"></span>
+                        <div><input type="text" name="UserCode" placeholder="用户名" id="UserCode" value="@Model.UserCode" autocomplete="off" /></div>
+                    </li>
+                    <li class="clear pword">
+                        <span class="fl"></span>
+                        <div><input type="password" name="Password" placeholder="密码" id="Password" autocomplete="off" /></div>
+                    </li>
+                </ul>
+            </div>
+            <div class="btn_area">
+                <input class="btn btn-success btn-block" type="submit" id="btn_login" value="登录">
+            </div>
+        </div>
+    </form>
+</div>
+
+@section scripts{
+    <script>
+        function checkAcount() {
+            var pdata = {
+                UserCode: $("#UserCode").val().trim(),
+                Password: $("#Password").val().trim()
+            };
+            if (!pdata.UserCode) {
+                layer.tips("用户名不能为空", "#UserCode", {
+                    tips: 3
+                });
+                return false;
+            }
+            if (!pdata.Password) {
+                layer.tips("密码不能为空", "#Password", {
+                    tips: 3
+                });
+                return false;
+            }
+            return true;
+        }
+        $(function () {
+            var strErrorMsg = "@Model.ErrorMsg";
+            if (strErrorMsg) {
+                layer.tips(strErrorMsg, "#btn_login", {
+                    tips: 3
+                });
+            }
+        });
+    </script>
+}

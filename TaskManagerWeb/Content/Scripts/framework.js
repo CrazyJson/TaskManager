@@ -1598,7 +1598,7 @@ var Ywdsoft = (function () {
                     strHTML += '<span><input type="text" id="{0}_c_custom_start" style="width:{1};"></span>'.format(item.id, inputwidth);
                     if (item.custom.isRange) {
                         //范围
-                        strHTML += '<span>—</span>' +
+                        strHTML += '<span>-</span>' +
                             '<span><input type="text" id="{0}_c_custom_end" {1}></span>'.format(item.id, inputwidth ? "style='width:{0}'".format(inputwidth) : "");
                     }
                     strHTML += '<span class="btn_filter_sure" data-id="{0}">确定</span></div>'.format(i);

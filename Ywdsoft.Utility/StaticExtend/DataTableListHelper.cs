@@ -81,7 +81,12 @@ namespace Ywdsoft.Utility
             for (int i = 0; i < properties.Count; i++)
             {
                 PropertyDescriptor property = properties[i];
-                dt.Columns.Add(property.Name, property.PropertyType);
+                Type colType = property.PropertyType;
+                if ((colType.IsGenericType) && (colType.GetGenericTypeDefinition() == typeof(Nullable<>)))
+                {
+                    colType = colType.GetGenericArguments()[0];
+                }
+                dt.Columns.Add(property.Name, colType);
             }
             object[] values = new object[properties.Count];
             foreach (T item in data)

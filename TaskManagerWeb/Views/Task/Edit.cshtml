@@ -160,8 +160,6 @@
             var url = "/Task";
             if (data.TaskID) {
                 type = "put";
-            } else {
-                data.TaskID = '@Guid.Empty.ToString()';
             }
             var index;
             $.ajax({

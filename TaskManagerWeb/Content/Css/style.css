@@ -8064,14 +8064,14 @@ body.skin-3 {
 }
 
 .filter_custom span{
-    padding-left:2px;padding-right:2px;
+    padding-left:2px;padding-right:2px;padding-top: 2px;
 }
 
 .filter_custom input{
     height:100%;
 }
 
-.btn_filter_sure{background-color:#F5F5F5;border: 1px solid #DDD;display: inline-block;cursor:pointer;width:50px;height:22px;text-align:center;line-height:22px;}
+.btn_filter_sure{background-color:#F5F5F5;border: 1px solid #DDD;display: inline-block;cursor:pointer;width:50px;height:22px;text-align:center;line-height:16px;}
 .btn_filter_sure:hover{background-color:#49F;border: 1px solid #49F; color: #FFF;}
 
 .filter_btn{

@@ -1,7 +1,7 @@
 ﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase
 
 @{
-    ViewBag.Title = @Model;
+    ViewBag.Title = @Model.Title;
 }
 
 @section style{
@@ -9,14 +9,15 @@
 }
 <!--头部-->
 <div class="header">
-    <h1 class="fl dis pt15">开源任务管理平台TaskManager</h1>
+    <h1 class="fl dis pt15">@Model.ProgramName</h1>
     <ul class="fr header_right">
+        <li class="fl" style="padding-right:0px;" id="li_RunState"><i class="fa fa-sun-o" style="color: #6BB4D5"></i> 运行状态</li>
         <li class="fl personal_information">
-            <i class="fa fa-user" style="font-size: 16px;"></i> hi,<span>焰尾迭 <i class="fa fa-angle-double-down" style="font-size: 16px;"></i></span>
-            <ul>
+            <i class="fa fa-user" style="font-size: 16px;"></i> hi,<span>@Model.UserName <i class="fa fa-angle-double-down" style="font-size: 16px;"></i></span>
+            @*<ul>
                 <li><a href="javascript:void(0)" class="navBar" data-url="personalInformation.html">个人信息</a></li>
                 <li><a href="javascript:void(0)" class="navBar" data-url="changeInformation.html">修改信息</a></li>
-            </ul>
+            </ul>*@
         </li>
         <li class="fl"><a href="/Login/Exit"><i class="glyphicon glyphicon-off" style="color: #c60000"></i> 退出</a></li>
     </ul>
@@ -31,16 +32,21 @@
                 <ul class="menu_b">
                     <li><a href="javascript:void(0)" class="navBar" data-url="/Task/Grid">任务管理<span class="arr_r fr"></span></a></li>
                 </ul>
-            </li>
-            @*<li class="menu_a">
-                <a href="javascript:void(0)"><i class="fa fa-user"></i>账号管理</a>
-                <ul class="menu_b">
-                </ul>
-            </li>*@
+            </li>           
             <li class="menu_a">
                 <a href="javascript:void(0)"><i class="fa fa-gear"></i>系统管理</a>
                 <ul class="menu_b">
                     <li><a href="javascript:void(0)" class="navBar" data-url="/Config/Grid">参数配置<span class="arr_r fr"></span></a></li>
+                    <li><a href="javascript:void(0)" class="navBar" data-url="/Tool/SysLog">系统日志<span class="arr_r fr"></span></a></li>
+                    <li><a href="javascript:void(0)" class="navBar" data-url="/Tool/ExceptionLog">异常消息<span class="arr_r fr"></span></a></li>
+                </ul>
+            </li>
+            <li class="menu_a">
+                <a href="javascript:void(0)"><i class="fa fa-desktop"></i>常用工具</a>
+                <ul class="menu_b">
+                    <li><a href="javascript:void(0)" class="navBar" data-url="/Tool/TableList">实体生成<span class="arr_r fr"></span></a></li>
+                    <li><a href="javascript:void(0)" class="navBar" data-url="/Tool/CronExpress">Cron表达式<span class="arr_r fr"></span></a></li>
+                    <li><a href="javascript:void(0)" class="navBar" data-url="/Tool/CommandLine">命令行<span class="arr_r fr"></span></a></li>
                 </ul>
             </li>
         </ul>
@@ -56,8 +62,6 @@
 <div class="myfooter">
     版权所有：<a href="http://yanweidie.cnblogs.com" target="_blank">焰尾迭</a>
 </div>
-
-
 
 @section scripts{
     <script>
@@ -80,8 +84,14 @@
             //点击切换菜单
             $('.navBar').on('click', function () {
                 var url = $(this).attr('data-url');
-                $('#mainUrl').attr({ src: url })
-            })
+                $('#mainUrl').attr({ src: url });
+            });
+
+            //系统运行状态
+            $("#li_RunState").on("click", function () {
+                $('#mainUrl').attr({ src: "/DestTop" });
+                $('.menu_b li.current').closest('.menu_a').trigger("click");
+            });
         })
     </script>
 }

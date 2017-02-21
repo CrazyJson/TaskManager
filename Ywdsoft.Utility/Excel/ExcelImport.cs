@@ -1,10 +1,16 @@
-﻿using NPOI.SS.UserModel;
+﻿/*
+ * Model: Excel批量导入数据，业务类型
+ * Desctiption: 描述
+ * Author: 杜冬军
+ * Created: 2016/8/15 9:50:23 
+ */
+using Ywdsoft.Utility.Auth;
+using NPOI.SS.UserModel;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using Ywdsoft.Utility.Auth;
 
 namespace Ywdsoft.Utility.Excel
 {
@@ -67,7 +73,7 @@ namespace Ywdsoft.Utility.Excel
         /// <returns>数据</returns>
         public virtual DataTable GetDataFromExcel(Stream ins, out ISheet datasheet)
         {
-            return NPOIHelper.GetDataFromExcel(ins, out datasheet);
+            return NPOIHelper.GetDataFromExcel(ins, out datasheet, StartRowIndex);
         }
 
         /// <summary>
@@ -403,7 +409,7 @@ namespace Ywdsoft.Utility.Excel
             }
             if (MaxLength > 0 && !empty)
             {
-                int length = isNChar ? cellValue.ToString().Length : GetLength(cellValue.ToString(), 3);
+                int length = isNChar ? cellValue.ToString().Trim().Length : GetLength(cellValue.ToString().Trim(), 3);
                 if (length > MaxLength)
                 {
                     return colName + "最大长度为" + MaxLength;
@@ -422,15 +428,15 @@ namespace Ywdsoft.Utility.Excel
         {
             if (str == null || str.Length == 0) { return 0; }
 
-            int l = str.Length;
-            int realLen = l;
+            int len = str.Length;
+            int realLen = len;
 
             #region 计算长度
             int clen = 0;//当前长度
-            while (clen < l)
+            while (clen < len)
             {
                 //每遇到一个中文，则将实际长度加一。
-                if ((int)str[clen] > 128) { realLen++; }
+                if ((int)str[clen] > 128) { realLen = realLen + chinaLength - 1; }
                 clen++;
             }
             #endregion

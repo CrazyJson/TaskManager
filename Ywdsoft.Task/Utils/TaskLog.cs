@@ -16,45 +16,5 @@ namespace Ywdsoft.Task.Utils
         /// 快递进度异常日志
         /// </summary>
         public static LogHelper ExpressProgressLogError = new LogHelper("ExpressProgressJob", "error");
-
-        /// <summary>
-        /// 代理IP任务普通日志
-        /// </summary>
-        public static LogHelper IpProxyLogInfo = new LogHelper("IpProxyJob", "info");
-
-        /// <summary>
-        /// 代理IP任务异常日志
-        /// </summary>
-        public static LogHelper IpProxyLogError = new LogHelper("IpProxyJob", "error");
-
-        /// <summary>
-        /// 发送消息任务普通日志
-        /// </summary>
-        public static LogHelper SendMessageLogInfo = new LogHelper("SendMessageJob", "info");
-
-        /// <summary>
-        /// 发送消息任务异常日志
-        /// </summary>
-        public static LogHelper SendMessageLogError = new LogHelper("SendMessageJob", "error");
-
-        /// <summary>
-        /// 配置任务普通日志
-        /// </summary>
-        public static LogHelper ConfigLogInfo = new LogHelper("ConfigJob", "info");
-
-        /// <summary>
-        /// 配置任务异常日志
-        /// </summary>
-        public static LogHelper ConfigLogError = new LogHelper("ConfigJob", "error");
-
-        /// <summary>
-        /// 配置任务普通日志
-        /// </summary>
-        public static LogHelper AutoRunLogInfo = new LogHelper("AutoRunJob", "info");
-
-        /// <summary>
-        /// 配置任务异常日志
-        /// </summary>
-        public static LogHelper AutoRunLogError = new LogHelper("AutoRunJob", "error");
     }
 }

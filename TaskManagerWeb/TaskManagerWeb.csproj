@@ -32,12 +32,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=4.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.4.1.1\lib\net40\AutoMapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Ionic.Zip, Version=1.9.1.5, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
       <HintPath>..\packages\NPOI.1.2.5\lib\net40\Ionic.Zip.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Nancy">
       <HintPath>..\packages\Nancy.1.4.3\lib\net40\Nancy.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy.Authentication.Forms, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nancy.Authentication.Forms.1.4.1\lib\net40\Nancy.Authentication.Forms.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Nancy.Hosting.Self">
       <HintPath>..\packages\Nancy.Hosting.Self.1.4.1\lib\net40\Nancy.Hosting.Self.dll</HintPath>
@@ -56,6 +64,18 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO, Version=2.6.10.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.1.1.10\lib\net40\System.IO.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime, Version=2.6.10.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.1.1.10\lib\net40\System.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Threading.Tasks, Version=2.6.10.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.1.1.10\lib\net40\System.Threading.Tasks.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.30506.0\lib\net40\System.Web.Razor.dll</HintPath>
@@ -76,6 +96,9 @@
     <Compile Include="Modules\LoginModule.cs" />
     <Compile Include="Modules\ExcelModule.cs" />
     <Compile Include="Modules\ConfigModule.cs" />
+    <Compile Include="Modules\ToolModule.cs" />
+    <Compile Include="Modules\LogModule.cs" />
+    <Compile Include="Modules\TagsModule.cs" />
     <Compile Include="Modules\TaskModule.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -96,12 +119,21 @@
     <None Include="Content\Scripts\plugins\layer\layim\data\group.json" />
     <None Include="Content\Scripts\plugins\layer\layim\data\groups.json" />
     <None Include="packages.config" />
+    <None Include="Template\Entity.vm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Template\Excel\任务批量导入.xls">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Views\Config\Grid.cshtml" />
     <None Include="Views\Home\DestTop.cshtml" />
     <None Include="Views\Home\Index.cshtml" />
+    <None Include="Views\Tool\CronExpress.cshtml" />
+    <None Include="Views\Tool\CommandLine.cshtml" />
+    <None Include="Views\Tool\ExceptionLog.cshtml" />
+    <None Include="Views\Tool\SysLog.cshtml" />
+    <None Include="Views\Tool\TableList.cshtml" />
+    <None Include="Views\Login\Index.cshtml" />
     <None Include="Views\Shared\_Layout.cshtml" />
     <None Include="Views\Task\Edit.cshtml" />
     <None Include="Views\Task\Grid.cshtml" />
@@ -111,18 +143,31 @@
     <Content Include="Content\Css\bootstrap.min.css" />
     <Content Include="Content\Css\common.css" />
     <Content Include="Content\Css\font-awesome.min.css" />
+    <Content Include="Content\Css\icon.css" />
     <Content Include="Content\Css\index.css" />
+    <Content Include="Content\Scripts\jquery.easyui.min.js" />
+    <Content Include="Content\Css\login.css" />
     <Content Include="Content\Css\plugins\jqgrid\ui.jqgrid.css" />
     <Content Include="Content\Css\plugins\webuploader\webuploader.css" />
     <Content Include="Content\Css\style.css" />
+    <Content Include="Content\Css\themes\bootstrap\easyui.css" />
+    <Content Include="Content\Css\themes\bootstrap\easyui.min.css" />
+    <Content Include="Content\Css\themes\bootstrap\images\panel_tools.png" />
+    <Content Include="Content\Css\themes\bootstrap\images\spinner_arrows.png" />
+    <Content Include="Content\Css\themes\bootstrap\images\tabs_icons.png" />
+    <Content Include="Content\Css\themes\icon.css" />
     <Content Include="Content\fonts\fontawesome-webfont.svg" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Content\Image\404.png" />
     <Content Include="Content\Image\500.png" />
     <Content Include="Content\Image\favicon.ico" />
     <Content Include="Content\Image\head-bg.png" />
+    <Content Include="Content\Image\login_bg.jpg" />
+    <Content Include="Content\Image\login_ico.gif" />
+    <Content Include="Content\Image\user.png" />
     <Content Include="Content\Scripts\bootstrap.min.js" />
     <Content Include="Content\Scripts\Config.js" />
+    <Content Include="Content\Scripts\cron.js" />
     <Content Include="Content\Scripts\framework.js" />
     <Content Include="Content\Scripts\jquery-1.10.2.min.js" />
     <Content Include="Content\Scripts\plugins\artTemplate\template-native.js" />
@@ -159,6 +204,7 @@
     <Content Include="Content\Scripts\plugins\layer\skin\layer.ext.css" />
     <Content Include="Content\Scripts\plugins\layer\skin\moon\default.png" />
     <Content Include="Content\Scripts\plugins\layer\skin\moon\style.css" />
+    <Content Include="Content\Scripts\plugins\slimscroll\jquery.slimscroll.min.js" />
     <Content Include="Content\Scripts\plugins\validate\additional-methods.min.js" />
     <Content Include="Content\Scripts\plugins\validate\jquery.metadata.js" />
     <Content Include="Content\Scripts\plugins\validate\jquery.validate.min.js" />
@@ -182,6 +228,14 @@
     <Content Include="Views\Error\NotFound.html" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Ywdsoft.Model\Ywdsoft.Model.csproj">
+      <Project>{8f936e5f-f5f4-43a4-8624-dab5d4128049}</Project>
+      <Name>Ywdsoft.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\YwdSoft.Service\YwdSoft.Service.csproj">
+      <Project>{691817d2-1e85-4c90-ba6a-db21b7fb4080}</Project>
+      <Name>YwdSoft.Service</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Ywdsoft.Utility\Ywdsoft.Utility.csproj">
       <Project>{d2aaedff-9f30-49a6-b242-f655503c24f3}</Project>
       <Name>Ywdsoft.Utility</Name>
@@ -189,6 +243,11 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
+  <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
+    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
+    <Error Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

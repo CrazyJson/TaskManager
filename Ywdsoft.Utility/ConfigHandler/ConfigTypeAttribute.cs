@@ -23,6 +23,10 @@ namespace Ywdsoft.Utility.ConfigHandler
         /// </summary>
         public string GroupCn { get; set; }
 
+        /// <summary>
+        /// 自定义页面地址，不为空的化则跳转到自定义配置页面
+        /// </summary>
+        public string CustomPage { get; set; }
 
         /// <summary>
         /// 是否立即进行服务间同步配置，并且立即应用配置，默认为是

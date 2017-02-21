@@ -6,13 +6,39 @@
 @section style{
 
 }
-桌面
+<table class="table table-bordered">
+    <tbody>
+        <tr style="height: 38px; background-color: #dff0d8;">
+            <td colspan="2" style="font-weight: bold;">系统运行状态</td>
+        </tr>
+        <tr lass="warning">
+            <th style="width: 200px; text-align: right; padding-right: 10px;">状态名</th>
+            <th style="padding-left: 10px;">状态值</th>
+        </tr>
+        <tr><th style="text-align: right; padding-right: 10px;">应用程序名称</th><td style="padding-left: 10px;">@Model.ProgramName</td></tr>
+        <tr><th style="text-align: right; padding-right: 10px;">进程名称</th><td style="padding-left: 10px;">@Model.ProcessName</td></tr>
+        <tr><th style="text-align: right; padding-right: 10px;">处理器个数</th><td style="padding-left: 10px;">@Model.CPUCount</td></tr>
+        <tr><th style="text-align: right; padding-right: 10px;">程序运行时间</th><td style="padding-left: 10px;">@Model.ProgramRunTime</td></tr>
+        <tr><th style="text-align: right; padding-right: 10px;">CPU占用率</th><td style="padding-left: 10px;">@Model.CPUUseRate</td></tr>
+        <tr><th style="text-align: right; padding-right: 10px;">工作集</th><td style="padding-left: 10px;">@(Model.WorkSet)MB</td></tr>
+        <tr><th style="text-align: right; padding-right: 10px;">最大虚拟内存量</th><td style="padding-left: 10px;">@(Model.PeakVirtualMEmorySize)MB</td></tr>
+        <tr><th style="text-align: right; padding-right: 10px;">虚拟内存量</th><td style="padding-left: 10px;">@(Model.VirtuaMemorySize)MB</td></tr>
+        <tr><th style="text-align: right; padding-right: 10px;">最大物理内存量</th><td style="padding-left: 10px;">@(Model.PeakWorkingSet)MB</td></tr>
+        <tr><th style="text-align: right; padding-right: 10px;">内存占用</th><td style="padding-left: 10px;">@Model.MemoryInfo</td></tr>
+        <tr><th style="text-align: right; padding-right: 10px;">分区信息</th><td style="padding-left: 10px;">@Html.Raw(Model.HardDiskInfo)</td></tr>
+        <tr><th style="text-align: right; padding-right: 10px;">线程数</th><td style="padding-left: 10px;">@Model.ThreadsCount</td></tr>
+        <tr><th style="text-align: right; padding-right: 10px;">句柄数</th><td style="padding-left: 10px;">@Model.HandleCount</td></tr>
+        <tr><th style="text-align: right; padding-right: 10px;">进程ID</th><td style="padding-left: 10px;">@Model.ProcessId</td></tr>
+        <tr><th style="text-align: right; padding-right: 10px;">主机名称</th><td style="padding-left: 10px;">@Model.MachineName</td></tr>
+        <tr><th style="text-align: right; padding-right: 10px;">系统版本</th><td style="padding-left: 10px;">@Model.OSVersion</td></tr>
+        <tr><th style="text-align: right; padding-right: 10px;">系统目录</th><td style="padding-left: 10px;">@Model.SystemDirectory</td></tr>
+        <tr><th style="text-align: right; padding-right: 10px;">用户域名</th><td style="padding-left: 10px;">@Model.UserDomainName</td></tr>
+        <tr><th style="text-align: right; padding-right: 10px;">用户名</th><td style="padding-left: 10px;">@Model.UserName</td></tr>
+        <tr><th style="text-align: right; padding-right: 10px;">CLR版本</th><td style="padding-left: 10px;">@Model.CLRVersion</td></tr>
+        <tr><th style="text-align: right; padding-right: 10px;">工作目录</th><td style="padding-left: 10px;">@Model.CurrentDirectory</td></tr>
+    </tbody>
+</table>
 
 
 @section scripts{
-<script>
-    $(function(){
-     
-    })
-</script>
 }

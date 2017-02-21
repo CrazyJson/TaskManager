@@ -165,9 +165,6 @@ namespace Ywdsoft.Excel
             Dictionary<string, string> dict = null;
             object objCellValue = null;
 
-            List<string> listAssetsId = new List<string>();
-            string strAssetsId = string.Empty;
-
             foreach (DataRow dr in dt.Rows)
             {
                 foreach (DataColumn dc in dt.Columns)

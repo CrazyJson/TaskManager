@@ -33,7 +33,8 @@ namespace Ywdsoft.Utility
                 }
                 catch (Exception ex)
                 {
-                    throw ex;
+                    LogHelper.WriteLog("程序以管理员方式运行被取消", ex);
+                    Console.Read();
                 }
                 System.Environment.Exit(0);
             }

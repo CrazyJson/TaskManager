@@ -1,0 +1,70 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase
+
+@{
+    ViewBag.Title = "命令行执行工具";
+}
+
+@section style{
+
+}
+
+<table class="table table-bordered">
+    <tbody>
+        <tr>
+            <td>执行结果</td>
+        </tr>
+        <tr>
+            <td>
+                <textarea id="txtResult" name="txtResult" style="width: 100%; height: 500px;resize:none;" readonly="readonly"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div>
+                    <label style="line-height: 10px;">请输入命令(help 帮助，help [cmd] 获取cmd命令的帮助，[cmd] /? 获取cmd命令的帮助)：</label>
+                    <input type="text" id="txtCmd" name="txtCmd" style="width: 100%; font-size: 18px;" autocomplete="on">
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+@section scripts{
+    <script>
+        $(function () {
+            $("#txtCmd").on("keydown", function (obj) {
+                if (obj && event.keyCode == 13) {
+                    var strCmd = $(this).val().trim();
+                    $(this).val('');
+                    //加载等待层
+                    var index;
+                    $.ajax({
+                        type: "post",
+                        url: "/Tool/Cmd",
+                        data: { "cmd": strCmd },
+                        beforeSend: function () {
+                            //加载等待层
+                            index = layer.load(0);
+                        },
+                        complete: function () {
+                            layer.close(index);
+                        },
+                        success: function (data) {
+                            if (strCmd.toLowerCase() == "cls") {
+                                $("#txtResult").text('');
+                            } else {
+                                var srcText = $("#txtResult").text();
+                                if (srcText.length > 0) {
+                                    srcText += '\r\n';
+                                }
+                                srcText += " # " + strCmd.toUpperCase() + "\r\n" + data;
+                                $("#txtResult").text(srcText);
+                            }
+                            console.log(data)
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

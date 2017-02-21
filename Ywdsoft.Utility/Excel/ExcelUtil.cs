@@ -74,7 +74,7 @@ namespace Ywdsoft.Utility.Excel
 
                     //请求的返回值对象
                     HttpResult result = http.GetHtml(item);
-                    var responseJson = JsonConvert.DeserializeObject<JsonBaseModel<DataTable>>(result.Html);
+                    var responseJson = JsonConvert.DeserializeObject<ApiResult<DataTable>>(result.Html);
                     if (!responseJson.HasError && responseJson.Message != "logout")
                     {
                         return responseJson.Result;

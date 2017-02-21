@@ -10,6 +10,7 @@ using System.Reflection;
 using Ywdsoft.Utility.Quartz;
 using Quartz.Impl.Matchers;
 using System.IO;
+using Ywdsoft.Utility.ConfigHandler;
 
 namespace Ywdsoft.Utility
 {
@@ -51,7 +52,7 @@ namespace Ywdsoft.Utility
 
                         properties["quartz.threadPool.type"] = "Quartz.Simpl.SimpleThreadPool, Quartz";
 
-                        properties["quartz.threadPool.threadCount"] = "10";
+                        properties["quartz.threadPool.threadCount"] = TaskConfig.TaskThreadCount.ToString();
 
                         properties["quartz.threadPool.threadPriority"] = "Normal";
 
@@ -215,11 +216,17 @@ namespace Ywdsoft.Utility
             if (scheduler.CheckExists(jk))
             {
                 var jobDetail = scheduler.GetJobDetail(jk);
+                var triggers = scheduler.GetTriggersOfJob(jk);
+                string taskName = JobKey;
+                if (triggers != null && triggers.Count > 0)
+                {
+                    taskName = triggers[0].Description;
+                }
                 var type = jobDetail.JobType;
                 var instance = type.FastNew();
                 var method = type.GetMethod("Execute");
                 method.Invoke(instance, new object[] { null });
-                LogHelper.WriteLog(string.Format("任务“{0}”立即运行", JobKey));
+                LogHelper.WriteLog(string.Format("任务“{0}”立即运行", taskName));
             }
         }
         /// 获取类的属性、方法  

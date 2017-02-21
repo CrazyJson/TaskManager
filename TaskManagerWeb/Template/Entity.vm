@@ -1,0 +1,32 @@
+﻿using Dapper;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace Ywdsoft.Model.Entity
+{
+	///<summary>
+	///$TableNameDesc
+	///</summary>
+	[Table("$TableName")]
+    public class  $EntityName
+    {
+		#foreach($p in $ColumnList)
+///<summary>      
+       ///#if($p.FieldNameDesc="")$p.FieldNameDesc
+	   #else $p.FieldName
+	   #end
+	///</summary> 
+	   #if($p.IsPK=="1")[Key]#end
+
+	   [Column("$p.FieldName")]
+       public $ConvertType.GetDotNetType($p.DataType) $p.FieldName
+       {
+			get;
+			set;
+	   }
+#end
+	}   
+}
+

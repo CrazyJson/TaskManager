@@ -15,9 +15,21 @@
     public class SysConfig
     {
         /// <summary>
-        /// 数据库连接字符串信息
+        /// Sqlite数据库连接信息
         /// </summary>
-        [PathMap(Key = "SqlConnect")]
-        public static string SqlConnect { get; set; }
+        [PathMap(Key = "SqliteConnect", AppDataDirectoryConvert = true)]
+        public static string SqliteConnect { get; set; }
+
+        /// <summary>
+        /// SqlServer数据库连接信息
+        /// </summary>
+        [PathMap(Key = "SqlServerConnect")]
+        public static string SqlServerConnect { get; set; }
+
+        /// <summary>
+        /// Sql语句存放目录信息
+        /// </summary>
+        [PathMap(Key = "YwdsoftExt:XmlCommandFolder")]
+        public static string XmlCommandFolder { get; set; }
     }
 }

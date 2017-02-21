@@ -5,9 +5,11 @@
  * 博客地址：http://yanweidie.cnblogs.com
  */
 
+using Nancy;
+
 namespace Ywdsoft.Modules
 {
-    public class ErrorModule : BaseModule
+    public class ErrorModule : NancyModule
     {
         public ErrorModule():base("Error")
         {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Data.SqlClient;
 using System.Collections.Generic;
 
 namespace Ywdsoft.Utility
@@ -10,7 +9,7 @@ namespace Ywdsoft.Utility
     /// </summary> 
     public class SQLHelper
     {
-        private static string strConnect =SysConfig.SqlConnect;
+        private static string strConnect = SysConfig.SqliteConnect;
 
         /// <summary>
         /// 执行命令,并返回影响函数
@@ -30,7 +29,7 @@ namespace Ywdsoft.Utility
         /// <returns>影响行数</returns>
         public static int ExecuteNonQuery(string strSQL)
         {
-            return ExecuteNonQuery(strSQL,null);
+            return ExecuteNonQuery(strSQL, null);
         }
 
         /// <summary>
@@ -53,7 +52,7 @@ namespace Ywdsoft.Utility
         /// <returns>结果集的第一行,第一列</returns>
         public static T ExecuteScalar<T>(string strSQL)
         {
-            return ExecuteScalar<T>(strSQL,null);
+            return ExecuteScalar<T>(strSQL, null);
         }
 
         /// <summary>
@@ -162,7 +161,7 @@ namespace Ywdsoft.Utility
         /// <returns>数据集</returns>
         public static DataTable RunProcedure(string procName)
         {
-            return RunProcedure(procName,null);
+            return RunProcedure(procName, null);
         }
 
         /// <summary>
@@ -212,32 +211,7 @@ namespace Ywdsoft.Utility
         /// <param name="srcTable">目标表名</param>
         public static void BatchSaveData(DataTable dataTable, string srcTable)
         {
-            try
-            {
-                using (var bulk = new SqlBulkCopy(strConnect)
-                {
-                    DestinationTableName = srcTable,
-                    BatchSize = 10000
-                })
-                {
-                    //先取出表里面有的字段
-                    DataTable dtSrc = FillDataTable("SELECT * FROM "+srcTable+" WHERE 1=2");
-                    //取出数据库和实体里面都存在的列，为bulk添加映射
-                    foreach (DataColumn item in dtSrc.Columns)
-                    {
-                        if (dataTable.Columns.Contains(item.ColumnName))
-                        {
-                            bulk.ColumnMappings.Add(item.ColumnName, item.ColumnName);
-                        }
-                    }
-                    bulk.WriteToServer(dataTable);
-                    bulk.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            DbHelper.BatchSaveData(strConnect, dataTable, srcTable);
         }
     }
 }

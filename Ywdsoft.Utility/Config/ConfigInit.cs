@@ -85,7 +85,7 @@ namespace Ywdsoft.Utility
                         {
                             throw new Exception("本地配置文件设置异常,节点" + PathMap.Key + "没有相应的value属性,请检查！");
                         }
-                        return GetRealValue(attr.Value, PathMap.IsDecrypt);
+                        return GetRealValue(attr.Value, PathMap);
                     }
                 }
                 //读取服务器配置文件信息
@@ -98,7 +98,7 @@ namespace Ywdsoft.Utility
                     {
                         throw new Exception("服务器配置文件设置异常,节点" + PathMap.Key + "没有相应的value属性,请检查！");
                     }
-                    return GetRealValue(attr.Value, PathMap.IsDecrypt);
+                    return GetRealValue(attr.Value, PathMap);
                 }
             }
             catch (Exception ex)
@@ -123,18 +123,22 @@ namespace Ywdsoft.Utility
         /// 获取配置文件真实值
         /// </summary>
         /// <param name="value">原始值</param>
-        /// <param name="IsDecrypt">是否需要解密</param>
+        /// <param name="map">设置信息</param>
         /// <returns>真实值</returns>
-        private static string GetRealValue(string value, bool IsDecrypt)
+        private static string GetRealValue(string value, PathMapAttribute map)
         {
-            if (IsDecrypt)
+            if (map.IsDecrypt)
             {
                 return DESEncrypt.Decrypt(value);
             }
-            else
+            else if (map.AppDataDirectoryConvert)
             {
-                return value;
+                if (value.Contains("|DataDirectory|"))
+                {
+                    return value.Replace("|DataDirectory|", AppDomain.CurrentDomain.BaseDirectory + "App_Data");
+                }
             }
+            return value;
         }
 
         /// <summary>
@@ -196,5 +200,10 @@ namespace Ywdsoft.Utility
         /// 是否需要对该值进行DES解密
         /// </summary>
         public bool IsDecrypt = false;
+
+        /// <summary>
+        /// 是否进行App_Data目录转换
+        /// </summary>
+        public bool AppDataDirectoryConvert = false;
     }
 }

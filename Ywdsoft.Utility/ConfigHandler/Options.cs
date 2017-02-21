@@ -20,7 +20,7 @@ namespace Ywdsoft.Utility.ConfigHandler
         public string OptionId { get; set; }
 
         ///<summary>
-        ///选项类型（字典表Kind 为 18 的类型，存放字典表主键编号） 
+        ///选项类型
         ///</summary> 
         public string OptionType { get; set; }
 
@@ -84,6 +84,11 @@ namespace Ywdsoft.Utility.ConfigHandler
         /// 是否立即进行服务间同步配置，并且立即应用配置，默认为是  为是会发送MQ消息
         /// </summary>
         public bool ImmediateUpdate { get; set; }
+
+        /// <summary>
+        /// 自定义页面地址，不为空的化则跳转到自定义配置页面
+        /// </summary>
+        public string CustomPage { get; set; }
     }
 
     /// <summary>

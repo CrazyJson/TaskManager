@@ -32,7 +32,7 @@ namespace Ywdsoft.Utility.ConfigHandler
             if (description == null)
             {
                 ConfigTypeAttribute typeAttr = type.GetMyAttribute<ConfigTypeAttribute>();
-                description = new ConfigDescription { Group = typeAttr.Group, GroupCn = typeAttr.GroupCn, ImmediateUpdate = typeAttr.ImmediateUpdate };
+                description = new ConfigDescription { Group = typeAttr.Group, GroupCn = typeAttr.GroupCn, ImmediateUpdate = typeAttr.ImmediateUpdate, CustomPage = typeAttr.CustomPage };
                 if (!string.IsNullOrEmpty(description.Group))
                 {
                     //获取分组类型属
@@ -46,6 +46,12 @@ namespace Ywdsoft.Utility.ConfigHandler
 
                     ConfigAttribute configAttr = null;
                     Type ValueType = typeof(ConfigValueType);
+
+                    //调用动态设置默认值方法    
+                    MethodInfo mi = type.GetMethod("SetDefaultValue");
+                    object typeInstance = Activator.CreateInstance(type);
+                    object[] objParams = new object[1];
+
                     foreach (PropertyInfo prop in propertyInfos)
                     {
                         //将配置了ConfigAttribute的静态属性添加到缓存，其它排除
@@ -67,6 +73,12 @@ namespace Ywdsoft.Utility.ConfigHandler
                             {
                                 SetConfigValueType(configAttr, prop.PropertyType);
                             }
+                            //设置默认值
+                            if (mi != null)
+                            {
+                                objParams[0] = configAttr;
+                                mi.Invoke(typeInstance, objParams);
+                            }
                             dict[prop.Name] = configAttr;
                             description.StaticPropertyInfo.Add(prop);
                         }
@@ -85,9 +97,10 @@ namespace Ywdsoft.Utility.ConfigHandler
         /// </summary>
         /// <param name="configAttr"></param>
         /// <param name="propertyType">属性类型</param>
-        private static void SetConfigValueType(ConfigAttribute configAttr,Type propertyType)
+        private static void SetConfigValueType(ConfigAttribute configAttr, Type propertyType)
         {
-            switch (propertyType.ToString()) {
+            switch (propertyType.ToString())
+            {
                 case "System.String":
                     configAttr.ValueType = ConfigValueType.String;
                     break;
@@ -121,6 +134,11 @@ namespace Ywdsoft.Utility.ConfigHandler
         public string GroupCn { get; set; }
 
         public bool ImmediateUpdate { get; set; }
+
+        /// <summary>
+        /// 自定义页面地址，不为空的化则跳转到自定义配置页面
+        /// </summary>
+        public string CustomPage { get; set; }
 
         /// <summary>
         /// 静态配置项属性

@@ -16,6 +16,11 @@ namespace Ywdsoft.Utility.ConfigHandler
         [Config(Name = "系统页面标题", DefaultValue = "任务管理平台TaskManager")]
         public static string SystemTitle { get; set; }
 
+        /// <summary>
+        /// 应用程序名称
+        /// </summary>
+        [Config(Name = "应用程序名称", DefaultValue = "TaskScheduler-任务执行容器")]
+        public static string ProgramName { get; set; }
 
         /// <summary>
         /// 系统静态资源文件版本管理

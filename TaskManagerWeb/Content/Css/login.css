@@ -1,0 +1,22 @@
+﻿/* 登录 */
+.login_ico,.login_area ul li span{background: url(../image/login_ico.gif) 0 0 no-repeat;}
+body{background:url(../image/login_bg.jpg) center top #3c99c4 no-repeat; }
+.login_wrap h2{font-size: 28px; font-weight: normal; color: #fff; margin-top: 50px;text-align:center;}
+.login_box {width: 432px; margin: 0 auto;}
+.login_box .head{position: relative; height: 180px;}
+.login_box .bubble{width: 175px; height: 105px;background-position: 0 0; position: absolute; right:20px; text-align: center;}
+.login_box .t_head{width: 90px; height: 100px; position: absolute;top: 80px;left: 172px;}
+.teacher .t_head{background-position: 0 -105px;}
+
+.login_area{background: #fff; border-radius: 20px; padding: 20px;}
+.login_area ul li{border-bottom: 1px solid #cecece; padding: 10px 0;}
+.login_area ul li span{display: inline-block;width: 30px; height: 30px;}
+.login_area .school span{background-position: 0 -309px;}
+.login_area .user span{background-position: -43px -309px;}
+.login_area .pword span{background-position: -85px -308px;}
+
+.login_area li div{ position: relative;width: 346px;float: right;}
+.login_area li input{height: 28px;width: 100%; font-size: 20px;border: 0;line-height: 28px;}
+.login_area li select{height: 30px;font-size: 20px;margin-left: 10px; border:0;width: 347px; color: #2983af;}
+.login_wrap .btn_area{text-align: center; margin-top: 40px;}
+.login_wrap .btn_area .btn{padding: 10px;border-radius: 50px; background: transparent; border: 2px solid #fff; color: #fff; font-weight: bold; font-size: 20px;width:100%;text-align:center;}

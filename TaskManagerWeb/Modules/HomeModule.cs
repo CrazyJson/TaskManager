@@ -6,6 +6,7 @@
  * 博客地址：http://yanweidie.cnblogs.com
  */
 using Nancy;
+using Ywdsoft.Utility;
 using Ywdsoft.Utility.ConfigHandler;
 
 namespace Ywdsoft.Modules
@@ -23,14 +24,13 @@ namespace Ywdsoft.Modules
             //主页
             Get["/Home/Index"] = r =>
             {
-                var model = SystemConfig.SystemTitle;
-                return View["index", model];
+                return View["index", new { UserName = UserAccountInfo.UserName, Title = SystemConfig.SystemTitle, ProgramName = SystemConfig.ProgramName }];
             };
 
             ///桌面
             Get["/DestTop"] = r =>
             {
-                return View["DestTop"];
+                return View["DestTop", MachineNumber.GetMachineInfo()];
             };
         }
     }

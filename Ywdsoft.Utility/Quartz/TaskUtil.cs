@@ -12,7 +12,7 @@ namespace Ywdsoft.Utility
         /// <summary>
         /// 任务ID
         /// </summary>
-        public Guid TaskID { get; set; }
+        public string TaskID { get; set; }
 
         /// <summary>
         /// 任务名称
@@ -100,10 +100,10 @@ namespace Ywdsoft.Utility
     /// </summary>
     public class TaskHelper
     {
-        private static string InsertSQL = @"INSERT INTO dbo.p_Task(TaskID,TaskName,CronExpressionString,Assembly,Class,Status,CronRemark,Remark,LastRunTime)
+        private static string InsertSQL = @"INSERT INTO p_Task(TaskID,TaskName,CronExpressionString,Assembly,Class,Status,CronRemark,Remark,LastRunTime)
                             VALUES(@TaskID,@TaskName,@CronExpressionString,@Assembly,@Class,@Status,@CronRemark,@Remark,@LastRunTime)";
 
-        private static string UpdateSQL = @"UPDATE dbo.p_Task SET TaskName=@TaskName,CronExpressionString=@CronExpressionString,Assembly=@Assembly,
+        private static string UpdateSQL = @"UPDATE p_Task SET TaskName=@TaskName,CronExpressionString=@CronExpressionString,Assembly=@Assembly,
                                 Class=@Class,CronRemark=@CronRemark,Remark=@Remark,LastRunTime=@LastRunTime WHERE TaskID=@TaskID";
         /// <summary>
         /// 获取指定id任务数据
@@ -164,7 +164,7 @@ namespace Ywdsoft.Utility
         /// <param name="TaskID">任务id</param>
         public static void UpdateRecentRunTime(string TaskID, DateTime LastRunTime)
         {
-            SQLHelper.ExecuteNonQuery("UPDATE p_Task SET RecentRunTime=GETDATE(),LastRunTime=@LastRunTime WHERE TaskID=@TaskID", new { TaskID = TaskID, LastRunTime = LastRunTime });
+            SQLHelper.ExecuteNonQuery("UPDATE p_Task SET RecentRunTime=CURRENT_TIMESTAMP,LastRunTime=@LastRunTime WHERE TaskID=@TaskID", new { TaskID = TaskID, LastRunTime = LastRunTime });
         }
 
         /// <summary>
@@ -181,9 +181,9 @@ namespace Ywdsoft.Utility
         /// </summary>
         /// <param name="condition">查询条件</param>
         /// <returns>符合条件的任务</returns>
-        public static JsonBaseModel<List<TaskUtil>> Query(QueryCondition condition)
+        public static ApiResult<List<TaskUtil>> Query(QueryCondition condition)
         {
-            JsonBaseModel<List<TaskUtil>> result = new JsonBaseModel<List<TaskUtil>>();
+            ApiResult<List<TaskUtil>> result = new ApiResult<List<TaskUtil>>();
             if (string.IsNullOrEmpty(condition.SortField))
             {
                 condition.SortField = "CreatedOn";
@@ -201,9 +201,9 @@ namespace Ywdsoft.Utility
         /// </summary>
         /// <param name="value">任务</param>
         /// <returns>保存结果</returns>
-        public static JsonBaseModel<string> SaveTask(TaskUtil value)
+        public static ApiResult<string> SaveTask(TaskUtil value)
         {
-            JsonBaseModel<string> result = new JsonBaseModel<string>();
+            ApiResult<string> result = new ApiResult<string>();
             result.HasError = true;
             if (value == null)
             {
@@ -244,13 +244,13 @@ namespace Ywdsoft.Utility
             }
             #endregion
 
-            JsonBaseModel<DateTime> cronResult = null;
+            ApiResult<DateTime> cronResult = null;
             try
             {
                 //新增
-                if (value.TaskID == Guid.Empty)
+                if (string.IsNullOrEmpty(value.TaskID))
                 {
-                    value.TaskID = Guid.NewGuid();
+                    value.TaskID = Guid.NewGuid().ToString("N");
                     //任务状态处理
 
                     cronResult = GetTaskeLastRunTime(value.CronExpressionString);
@@ -314,9 +314,9 @@ namespace Ywdsoft.Utility
         /// </summary>
         /// <param name="CronExpressionString"></param>
         /// <returns>下次运行时间</returns>
-        private static JsonBaseModel<DateTime> GetTaskeLastRunTime(string CronExpressionString)
+        private static ApiResult<DateTime> GetTaskeLastRunTime(string CronExpressionString)
         {
-            JsonBaseModel<DateTime> result = new JsonBaseModel<DateTime>();
+            ApiResult<DateTime> result = new ApiResult<DateTime>();
             try
             {
                 //计算下次任务运行时间

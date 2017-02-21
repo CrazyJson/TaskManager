@@ -34,7 +34,6 @@ namespace Owin_Nancy
                 LogHelper.WriteLog("Web管理站点启动失败", ex);
                 Random random = new Random();
                 port = random.Next(port - 1000, port + 1000);
-                Console.WriteLine(ex.Message);
                 Console.WriteLine(" 重新尝试端口:" + port);
                 return Start(port);
             }

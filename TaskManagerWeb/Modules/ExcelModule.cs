@@ -11,11 +11,9 @@ using System.IO;
 using System.Linq;
 using Ywdsoft.Utility.Excel;
 using Newtonsoft.Json;
-using Nancy.Helpers;
 using Ywdsoft.Utility.Mef;
 using Ywdsoft.Utility;
 using Ywdsoft.Utility.Http;
-using System.Web;
 
 namespace Ywdsoft.Modules
 {

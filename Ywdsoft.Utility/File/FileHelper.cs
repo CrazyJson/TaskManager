@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Web;
@@ -24,7 +25,7 @@ namespace Ywdsoft.Utility
             relativePath = relativePath.Replace("/", "\\");
             if (relativePath[0] == '\\')
             {
-                relativePath=relativePath.Remove(0, 1);
+                relativePath = relativePath.Remove(0, 1);
             }
             //判断是Web程序还是window程序
             if (HttpContext.Current != null)
@@ -90,10 +91,85 @@ namespace Ywdsoft.Utility
                 using (FileStream file = new FileStream(filePath, FileMode.Open))
                 {
                     //哈希算法根据文本得到哈希码的字节数组 
-                    byte[] hashByte= hash.ComputeHash(file);
+                    byte[] hashByte = hash.ComputeHash(file);
                     //将字节数组装换为字符串  
                     return BitConverter.ToString(hashByte);
                 }
+            }
+        }
+
+        /// <summary>
+        /// 复制一个文件夹下的所有文件到另外一个文件夹
+        /// </summary>
+        /// <param name="sourceDirName">源文件夹目录</param>
+        /// <param name="destDirName">目标文件夹路径</param>
+        public static void CopyDirectory(string sourceDirName, string destDirName)
+        {
+            try
+            {
+                if (!Directory.Exists(destDirName))
+                {
+                    Directory.CreateDirectory(destDirName);
+                    File.SetAttributes(destDirName, File.GetAttributes(sourceDirName));
+
+                }
+
+                if (destDirName[destDirName.Length - 1] != Path.DirectorySeparatorChar)
+                    destDirName = destDirName + Path.DirectorySeparatorChar;
+
+                string[] files = Directory.GetFiles(sourceDirName);
+                foreach (string file in files)
+                {
+                    if (File.Exists(destDirName + Path.GetFileName(file)))
+                        continue;
+                    File.Copy(file, destDirName + Path.GetFileName(file), true);
+                    File.SetAttributes(destDirName + Path.GetFileName(file), FileAttributes.Normal);
+                }
+
+                string[] dirs = Directory.GetDirectories(sourceDirName);
+                foreach (string dir in dirs)
+                {
+                    CopyDirectory(dir, destDirName + Path.GetFileName(dir));
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// 复制一个文件夹下指定的文件到另外一个文件夹
+        /// </summary>
+        /// <param name="list">指定文件</param>
+        /// <param name="destDirName">目标文件夹路径</param>
+        public static void CopyFiles(List<string> list, string destDirName)
+        {
+            try
+            {
+                if (!Directory.Exists(destDirName))
+                {
+                    Directory.CreateDirectory(destDirName);
+                }
+
+                if (destDirName[destDirName.Length - 1] != Path.DirectorySeparatorChar)
+                {
+                    destDirName = destDirName + Path.DirectorySeparatorChar;
+                }
+
+
+                string[] files = list.ToArray();
+                foreach (string file in files)
+                {
+                    if (File.Exists(destDirName + Path.GetFileName(file)))
+                        continue;
+                    File.Copy(file, destDirName + Path.GetFileName(file), true);
+                    File.SetAttributes(destDirName + Path.GetFileName(file), FileAttributes.Normal);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
     }

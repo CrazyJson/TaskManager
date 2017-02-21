@@ -3,7 +3,6 @@
  * Desctiption: 描述
  * Author: 杜冬军
  * Created: 2016/3/21 16:12:58 
- * Copyright：武汉中科通达高新技术股份有限公司
  */
 
 using System;
@@ -121,7 +120,7 @@ namespace Ywdsoft.Utility.ConfigHandler
 
                 itemOptionViewModel = new OptionViewModel();
 
-                optionGroup = new OptionGroup { GroupType = desc.Group, GroupName = desc.GroupCn, ImmediateUpdate = desc.ImmediateUpdate };
+                optionGroup = new OptionGroup { GroupType = desc.Group, GroupName = desc.GroupCn, ImmediateUpdate = desc.ImmediateUpdate, CustomPage = desc.CustomPage };
                 listOptionGroup.Add(optionGroup);
 
                 itemOptionViewModel.Group = optionGroup;
@@ -149,7 +148,7 @@ namespace Ywdsoft.Utility.ConfigHandler
                 }
                 result.Add(itemOptionViewModel);
             }
-            return result.OrderBy(e => e.Group.GroupType).ToList(); ;
+            return result.OrderBy(e => e.Group.GroupType).ToList();
         }
 
         /// <summary>
@@ -199,9 +198,9 @@ namespace Ywdsoft.Utility.ConfigHandler
         /// 保存配置信息
         /// </summary>
         /// <param name="value">配置信息</param>
-        public JsonBaseModel<string> Save(OptionViewModel value)
+        public ApiResult<string> Save(OptionViewModel value)
         {
-            JsonBaseModel<string> result = new JsonBaseModel<string>();
+            ApiResult<string> result = new ApiResult<string>();
             result.HasError = true;
             string GroupType = value.Group.GroupType;
             if (value.Group == null || string.IsNullOrEmpty(GroupType) || value.ListOptions == null)
@@ -217,9 +216,10 @@ namespace Ywdsoft.Utility.ConfigHandler
                 result.Message = string.Format("当前保存配置信息{0}不对应后台的任务配置类", GroupType);
                 return result;
             }
-            if (!curConfigOption.BeforeSave(value))
+            VerifyResult vr = curConfigOption.BeforeSave(value);
+            if (!vr.IsSusscess)
             {
-                result.Message = "当前配置项不允许保存";
+                result.Message = vr.ErrorMessage;
                 return result;
             }
 
@@ -247,8 +247,6 @@ namespace Ywdsoft.Utility.ConfigHandler
             //对当前配置项进行赋值
             SetValue(curConfigOption, value.ListOptions);
 
-            //调用保存后处理事件
-            curConfigOption.AfterSave(curConfigOption);
             result.HasError = false;
             return result;
         }
@@ -260,6 +258,9 @@ namespace Ywdsoft.Utility.ConfigHandler
         /// <param name="ListOptions">配置项值</param>
         public void SetValue(ConfigOption item, List<Options> ListOptions)
         {
+            //调用保存后处理事件
+            item.AfterSave(ListOptions);
+
             var desc = ConfigDescriptionCache.GetTypeDiscription(item.GetType());
             Options option = null;
             foreach (PropertyInfo prop in desc.StaticPropertyInfo)

@@ -21,6 +21,11 @@ namespace Ywdsoft.Utility.Excel
         public static readonly int MAX_COLUMN_WIDTH = 100 * 256;
 
         /// <summary>
+        /// 最大行索引
+        /// </summary>
+        private static readonly int MAX_ROW_INDEX = 65536;
+
+        /// <summary>
         /// 生成EXECL文件，通过读取DataTable和列头映射信息
         /// </summary>
         /// <param name="dt">数据源</param>
@@ -72,7 +77,7 @@ namespace Ywdsoft.Utility.Excel
                 }
             }
 
-            int sheetNum = (int)Math.Ceiling(dt.Rows.Count * 1.0 / 65536);
+            int sheetNum = (int)Math.Ceiling(dt.Rows.Count * 1.0 / MAX_ROW_INDEX);
             //最多生成5个标签页的数据
             sheetNum = sheetNum > 3 ? 3 : (sheetNum == 0 ? 1 : sheetNum);
             ICell cell = null;
@@ -404,7 +409,10 @@ namespace Ywdsoft.Utility.Excel
             {
                 hidden = workbook.GetSheetAt(hIndex);
             }
-
+            if (textlist == null || textlist.Length == 0)
+            {
+                textlist = new string[] { "" };
+            }
             IRow row = null;
             ICell cell = null;
             for (int i = 0, length = textlist.Length; i < length; i++)

@@ -3,24 +3,27 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using System.Text;
-using System.Data.SqlClient;
-using System.Data;
 using System.Reflection;
 using System.Data.Common;
+using System.Data.SQLite;
+using System.Data;
+using Ywdsoft.Utility.DB;
 
 namespace Ywdsoft.Utility
 {
     internal static class DbHelper
     {
+
+
         internal static int ExecuteNonQuery(string strCon, string strSQL, object param)
         {
-            using (SqlConnection con = new SqlConnection(strCon))
+            using (SQLiteConnection con = new SQLiteConnection(strCon))
             {
                 if (con.State != ConnectionState.Open)
                 {
                     con.Open();
                 }
-                SqlCommand cmd = GetSqlCommand(strSQL, param);
+                SQLiteCommand cmd = GetSQLiteCommand(strSQL, param);
                 cmd.Connection = con;
                 return cmd.ExecuteNonQuery();
             }
@@ -29,15 +32,15 @@ namespace Ywdsoft.Utility
 
         internal static DataTable FillDataTable(string strCon, string strSQL, object param)
         {
-            using (SqlConnection con = new SqlConnection(strCon))
+            using (SQLiteConnection con = new SQLiteConnection(strCon))
             {
-                SqlCommand cmd = GetSqlCommand(strSQL, param);
+                SQLiteCommand cmd = GetSQLiteCommand(strSQL, param);
                 cmd.Connection = con;
                 if (con.State != ConnectionState.Open)
                 {
                     con.Open();
                 }
-                SqlDataReader reader = cmd.ExecuteReader();
+                SQLiteDataReader reader = cmd.ExecuteReader();
                 DataSet ds = new DataSet();
                 ds.EnforceConstraints = false;
                 DataTable table = new DataTable("_tb");
@@ -49,16 +52,16 @@ namespace Ywdsoft.Utility
 
         internal static DataTable RunProcedure(string strCon, string procName, object param)
         {
-            using (SqlConnection con = new SqlConnection(strCon))
+            using (SQLiteConnection con = new SQLiteConnection(strCon))
             {
-                SqlCommand cmd = GetSqlCommand(procName, param);
+                SQLiteCommand cmd = GetSQLiteCommand(procName, param);
                 cmd.Connection = con;
                 if (con.State != ConnectionState.Open)
                 {
                     con.Open();
                 }
                 cmd.CommandType = CommandType.StoredProcedure;
-                SqlDataReader reader = cmd.ExecuteReader();
+                SQLiteDataReader reader = cmd.ExecuteReader();
                 DataSet ds = new DataSet();
                 ds.EnforceConstraints = false;
                 DataTable table = new DataTable("_tb");
@@ -70,9 +73,9 @@ namespace Ywdsoft.Utility
 
         internal static DataSet RunProcedureToDataSet(string strCon, string procName, object param, params string[] srcTable)
         {
-            using (SqlConnection con = new SqlConnection(strCon))
+            using (SQLiteConnection con = new SQLiteConnection(strCon))
             {
-                SqlCommand cmd = GetSqlCommand(procName, param);
+                SQLiteCommand cmd = GetSQLiteCommand(procName, param);
                 cmd.Connection = con;
                 cmd.CommandType = CommandType.StoredProcedure;
                 if (con.State != ConnectionState.Open)
@@ -80,7 +83,7 @@ namespace Ywdsoft.Utility
                     con.Open();
                 }
                 DataSet ds = new DataSet();
-                SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd);
                 adapter.Fill(ds);
                 string tablename = "_tb";
                 if (srcTable != null && srcTable.Length > 0)
@@ -97,16 +100,16 @@ namespace Ywdsoft.Utility
 
         internal static DataSet FillDataSet(string strCon, string strSQL, object param)
         {
-            using (SqlConnection con = new SqlConnection(strCon))
+            using (SQLiteConnection con = new SQLiteConnection(strCon))
             {
-                SqlCommand cmd = GetSqlCommand(strSQL, param);
+                SQLiteCommand cmd = GetSQLiteCommand(strSQL, param);
                 cmd.Connection = con;
                 if (con.State != ConnectionState.Open)
                 {
                     con.Open();
                 }
                 DataSet ds = new DataSet();
-                SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd);
                 adapter.Fill(ds);
                 for (int i = 0; i < ds.Tables.Count; i++)
                 {
@@ -118,15 +121,82 @@ namespace Ywdsoft.Utility
 
         internal static T ExecuteScalar<T>(string strCon, string strSQL, object param)
         {
-            using (SqlConnection con = new SqlConnection(strCon))
+            using (SQLiteConnection con = new SQLiteConnection(strCon))
             {
-                SqlCommand cmd = GetSqlCommand(strSQL, param);
+                SQLiteCommand cmd = GetSQLiteCommand(strSQL, param);
                 cmd.Connection = con;
                 if (con.State != ConnectionState.Open)
                 {
                     con.Open();
                 }
                 return ConvertScalar<T>(cmd.ExecuteScalar());
+            }
+        }
+
+        /// <summary>
+        /// 批量保存数据
+        /// </summary>
+        /// <param name="dataTable">dataTable</param>
+        /// <param name="srcTable">目标表名</param>
+        internal static void BatchSaveData(string strCon, DataTable dataTable, string srcTable)
+        {
+            using (SQLiteConnection con = new SQLiteConnection(strCon))
+            {
+                if (con.State != ConnectionState.Open)
+                {
+                    con.Open();
+                }
+                //先取出表里面有的字段
+                DataTable dtSrc = FillDataTable(strCon, "SELECT * FROM " + srcTable + " WHERE 1=2", null);
+
+                StringBuilder sb = new StringBuilder();
+                sb.AppendFormat("INSERT INTO {0}(", srcTable);
+                StringBuilder sbParam = new StringBuilder();
+                sbParam.AppendFormat(" VALUES(");
+                Dictionary<string, Type> dict = new Dictionary<string, Type>(dtSrc.Columns.Count);
+                //取出数据库和实体里面都存在的列，为bulk添加映射
+                foreach (DataColumn item in dtSrc.Columns)
+                {
+                    if (dataTable.Columns.Contains(item.ColumnName))
+                    {
+                        sb.AppendFormat("{0},", item.ColumnName);
+                        sbParam.AppendFormat("@{0},", item.ColumnName);
+                        dict[item.ColumnName] = item.DataType;
+                    }
+                }
+                sb.Remove(sb.Length - 1, 1).Append(")");
+                sbParam.Remove(sbParam.Length - 1, 1).Append(")");
+                string strSQL = sb.ToString() + sbParam.ToString();
+                object value = null;
+                using (SQLiteCommand cmd = new SQLiteCommand(con))
+                {
+                    foreach (var key in dict.Keys)
+                    {
+                        cmd.Parameters.AddWithValue(key, DBNull.Value);
+                    }
+                    using (var transaction = con.BeginTransaction())
+                    {
+                        foreach (DataRow dr in dataTable.Rows)
+                        {
+                            cmd.CommandText = strSQL;
+                            foreach (var key in dict.Keys)
+                            {
+                                value = dr[key];
+                                if (value == null || value == DBNull.Value)
+                                {
+                                    cmd.Parameters[key].Value = DBNull.Value;
+                                }
+                                else
+                                {
+                                    cmd.Parameters[key].Value = value;
+                                }
+                                cmd.Parameters[key].ResetDbType();
+                            }
+                            cmd.ExecuteNonQuery();
+                        }
+                        transaction.Commit();
+                    }
+                }
             }
         }
 
@@ -148,15 +218,15 @@ namespace Ywdsoft.Utility
 
         internal static T Single<T>(string strCon, string strSQL, object param)
         {
-            using (SqlConnection con = new SqlConnection(strCon))
+            using (SQLiteConnection con = new SQLiteConnection(strCon))
             {
-                SqlCommand cmd = GetSqlCommand(strSQL, param);
+                SQLiteCommand cmd = GetSQLiteCommand(strSQL, param);
                 cmd.Connection = con;
                 if (con.State != ConnectionState.Open)
                 {
                     con.Open();
                 }
-                SqlDataReader dr = cmd.ExecuteReader();
+                SQLiteDataReader dr = cmd.ExecuteReader();
                 T obj = default(T);
                 // 循环读取结果集
                 while (dr.Read())
@@ -171,15 +241,15 @@ namespace Ywdsoft.Utility
 
         internal static List<T> ToList<T>(string strCon, string strSQL, object param)
         {
-            using (SqlConnection con = new SqlConnection(strCon))
+            using (SQLiteConnection con = new SQLiteConnection(strCon))
             {
-                SqlCommand cmd = GetSqlCommand(strSQL, param);
+                SQLiteCommand cmd = GetSQLiteCommand(strSQL, param);
                 cmd.Connection = con;
                 if (con.State != ConnectionState.Open)
                 {
                     con.Open();
                 }
-                SqlDataReader dr = cmd.ExecuteReader();
+                SQLiteDataReader dr = cmd.ExecuteReader();
                 List<T> list = new List<T>();
                 T obj = default(T);
                 // 循环读取结果集
@@ -194,12 +264,12 @@ namespace Ywdsoft.Utility
         }
 
         /// <summary>
-        /// 读取SqlDataReader一行数据转换成T
+        /// 读取SQLiteDataReader一行数据转换成T
         /// </summary>
         /// <typeparam name="T">类型</typeparam>
-        /// <param name="dr">SqlDataReader</param>
+        /// <param name="dr">SQLiteDataReader</param>
         /// <returns>T</returns>
-        private static T GetSingleT<T>(SqlDataReader dr)
+        private static T GetSingleT<T>(SQLiteDataReader dr)
         {
             Type type = typeof(T);
             T obj = (T)type.FastNew();
@@ -210,22 +280,19 @@ namespace Ywdsoft.Utility
                 if (pInfo != null)
                 {
                     Type ptype = pInfo.PropertyType;
-                    if (!ptype.IsEnum)
+                    object val = dr.GetValue(i);
+                    if (val != null && DBNull.Value.Equals(val) == false)
                     {
-                        pInfo.FastSetValue(obj, dr[i]);
-                    }
-                    else
-                    {
-                        pInfo.FastSetValue(obj, Enum.ToObject(ptype, dr[i]));
+                        pInfo.FastSetValue(obj, val.Convert(ptype));
                     }
                 }
             }
             return obj;
         }
 
-        public static SqlCommand GetSqlCommand(string strSQL, object argsObject)
+        public static SQLiteCommand GetSQLiteCommand(string strSQL, object argsObject)
         {
-            SqlCommand cmd = new SqlCommand();
+            SQLiteCommand cmd = new SQLiteCommand();
             if (argsObject != null)
             {
                 //如果参数对象为Hashtable，则直接从里面获取参数
@@ -308,7 +375,7 @@ namespace Ywdsoft.Utility
                         }
                         else
                         {
-                            SqlParameter parameter = value as SqlParameter;
+                            SQLiteParameter parameter = value as SQLiteParameter;
                             if (parameter != null)
                             {
                                 cmd.Parameters.Add(parameter);

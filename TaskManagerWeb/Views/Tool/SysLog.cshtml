@@ -1,0 +1,311 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase
+@{
+    ViewBag.Title = "系统日志";
+
+}
+@section style{
+    <!-- jqgrid-->
+    <link href="~/Content/Css/plugins/jqgrid/ui.jqgrid.css" rel="stylesheet">
+}
+
+<div class="row-fluid clearfix bb-1 mb10" id="input_custom_searchbox">
+    <div class="col-sm-5 pl0">
+        <div class="input-group">
+            <span class="input-group-addon">文件名称</span>
+            <input type="text" class="form-control" id="txt_FileName">
+        </div>
+
+    </div>
+    <div class="col-sm-5  pl0">
+        <div class="input-group">
+            <span class="input-group-addon">文件大小</span>
+            <div class="input-group col-sm-12 ">
+                <input type="number" class="form-control col-sm-6" id="txt_FileSizeStart" min="0" />
+                <span class="input-group-addon" style="border-left:none; border-right:0;">到</span>
+                <input type="number" class="form-control col-sm-6" id="txt_FileSizeEnd" min="0" />
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-2 pl0">
+        <button class="btn btn-white" id="btn_resetSearch" style="margin-left:10px;">清空</button>
+        <button class="btn btn-primary" id="btn_search">搜索</button>
+    </div>
+</div>
+
+<!-- 查询条件 -->
+<div class="searchbox"></div>
+
+<div class="app-toolbar">
+    <button class="btn btn-white btn-sm" id="btn_Download_Select"><span class="fa fa-cloud-download"></span> 下载选中日志</button>
+    <button class="btn btn-white btn-sm" id="btn_Download_All"><span class="fa fa-cloud-download"></span> 下载所有日志</button>
+</div>
+
+<!-- 列表 -->
+<table id="grid_Log"></table>
+
+@section scripts{
+    <!-- jqGrid -->
+    <script src="~/Content/Scripts/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+    <script src="~/Content/Scripts/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script src="~/Content/Scripts/plugins/layer/laydate/laydate.js"></script>
+    <script>
+        var gridLog = null, jsonSjfw = {};
+        $(function () {
+            //初始化查询控件
+            initSearchBox();
+
+            //初始化数据
+            initData();
+
+            //事件绑定
+            bindEvents();
+        })
+
+        //初始化搜索框
+        function initSearchBox() {
+            //时间范围初始化
+            jsonSjfw = [
+                { "value": "0", "text": "最近10分钟", "region": [] },
+                { "value": "1", "text": "最近半小时", "region": [] },
+                { "value": "2", "text": "最近1小时", "region": [] },
+                { "value": "3", "text": "今天", "region": [laydate.now(), laydate.now(1)] },
+                { "value": "4", "text": "昨天", "region": [laydate.now(-1), laydate.now()] },
+                { "value": "5", "text": "最近3天", "region": [laydate.now(-2), laydate.now(1)] },
+                { "value": "6", "text": "最近7天", "region": [laydate.now(-6), laydate.now(1)] },
+                { "value": "7", "text": "最近15天", "region": [laydate.now(-14), laydate.now(1)] },
+                { "value": "8", "text": "最近30天", "region": [laydate.now(-29), laydate.now(1)] }
+            ];
+            var options = {
+                //查询事件
+                "search": function (paramList) {
+                    gridLog.load(handleParam(paramList));
+                },
+                //默认展开条件数
+                "expandRow": 2,
+                //查询条件
+                "searchBoxs": [
+                     {
+                         "id": "sjfw",
+                         "isMultiple": false,
+                         "type": "datetime",
+                         "title": "创建时间",
+                         "data": jsonSjfw,
+                         "custom": {
+                             "isRange": true,
+                             'event': function (start, end) {
+                                 if (!start || !end) {
+                                     var id, tip = '开始日期,截止日期必填';
+                                     if (!start) {
+                                         id = "#searchitem_sjfw_c_custom_start";
+                                     }
+                                     else if (!end) {
+                                         id = "#searchitem_sjfw_c_custom_end";
+                                     }
+                                     layer.tips(tip, id, {
+                                         tips: 3
+                                     });
+                                     return false;
+                                 }
+                                 else {
+                                     return true;
+                                 }
+                             }
+                         }
+                     },
+                     {
+                         "id": "LogType",
+                         "isMultiple": false,
+                         "title": "日志类型",
+                         "data": [{ "value": "0", "text": "普通消息日志" }, { "value": "1", "text": "异常日志" }]
+                     }
+                ]
+            };
+            $(".searchbox").search(options);
+
+            //自定义日期搜索初始化
+            $("#searchitem_sjfw_c_custom_start").addClass("form-control layer-date");
+            $("#searchitem_sjfw_c_custom_end").addClass("form-control layer-date");
+            //日期范围限制
+            var start = {
+                elem: '#searchitem_sjfw_c_custom_start',
+                format: 'YYYY-MM-DD hh:mm:ss',
+                max: laydate.now(),
+                istime: true,
+                istoday: true
+            };
+            var end = {
+                elem: '#searchitem_sjfw_c_custom_end',
+                format: 'YYYY-MM-DD hh:mm:ss',
+                max: laydate.now(),
+                istime: true,
+                istoday: true
+            };
+            laydate(start);
+            laydate(end);
+        }
+
+        //初始化数据
+        function initData() {
+            //初始化表格控件
+            gridLog = new Ywdsoft.Grid("grid_Log", {
+                idField: "FileName",
+                height: calcGridHeight(),
+                url: "/Log/PostQuery",
+                multiselect: true,
+                rownumbers: true,
+                colNames: ['文件名称', '大小(KB)', '创建时间', '操作'],
+                colModel: [
+                     {
+                         name: 'FileName',
+                         index: 'FileName'
+                     },
+                    {
+                        name: 'FileSize',
+                        index: 'FileSize',
+                        width: 120,
+                        align: "center",
+                        fixed: true
+                    },
+                    {
+                        name: 'CreatedOn',
+                        index: 'CreatedOn',
+                        width: 150,
+                        align: "center",
+                        formatter: "date",
+                        fixed: true,
+                        formatoptions: { srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d H:i:s' }
+                    },
+                    {
+                        sortable: false,
+                        width: 200,
+                        fixed: true,
+                        title: false,
+                        align: "center",
+                        resizable: false,
+                        formatter: function (cellvalue, options, rowObject) {
+                            return '<div><a href="/Log/SingleDownload?name={0}" class="pr10" title="下载" target="_blank">下载</a><a href="/Log/LogDetail?name={0}" class="pr10" title="详情" target="_blank">详情</a></div>'.format(encodeURIComponent(rowObject.FilePath));
+                        }
+                    }]
+            });
+        }
+
+        //计算表格高度
+        function calcGridHeight() {
+            return $(window).height() - 250;
+        }
+
+        //处理查询参数
+        function handleParam(paramList) {
+            var FilterList = [];
+            //文件名称
+            var strFileName = $("#txt_FileName").val().trim();
+            if (strFileName) {
+                FilterList.push({ "Operator": "like", "FieldName": "FileName", "FieldValue": strFileName });
+            }
+            //文件大小
+            var strFileZiseStart = $("#txt_FileSizeStart").val().trim();
+            if (strFileZiseStart) {
+                FilterList.push({ "Operator": "ge", "FieldName": "FileSizeStart", "FieldValue": strFileZiseStart });
+            }
+            var strFileZiseEnd = $("#txt_FileSizeEnd").val().trim();
+            if (strFileZiseEnd) {
+                FilterList.push({ "Operator": "le", "FieldName": "FileSizeEnd", "FieldValue": strFileZiseEnd });
+            }
+
+            var item = null;
+            var value = null;
+            //时间范围
+            for (var i = 0, length = paramList.length; i < length; i++) {
+                item = paramList[i];
+                value = null;
+                switch (item.id) {
+                    case "sjfw":
+                        //时间范围
+                        if (item.CustomList) {
+                            if (item.CustomList[0]) {
+                                FilterList.push({ "Operator": "ge", "FieldName": "CreatedOnStart", "FieldValue": item.CustomList[0], "IsDateTime": true });
+                            }
+                            if (item.CustomList[1]) {
+                                FilterList.push({ "Operator": "le", "FieldName": "CreatedOnEnd", "FieldValue": item.CustomList[1], "IsDateTime": true });
+                            }
+                        }
+                        else if (item.ValueList) {
+                            if (item.ValueList.length > 0) {
+                                var key = item.ValueList[0];
+                                var region = jsonSjfw[key].region;
+                                if (key == 0 || key == 1 || key == 2) {
+                                    region[1] = laydate.now(0, "YYYY-MM-DD hh:mm:ss");
+                                    switch (key) {
+                                        case "0":
+                                            region[0] = region[1].addMinutes(-10);
+                                            break;
+                                        case "1":
+                                            region[0] = region[1].addMinutes(-30);
+                                            break;
+                                        case "2":
+                                            region[0] = region[1].addMinutes(-60);
+                                            break;
+                                    }
+                                    FilterList.push({ "Operator": "ge", "FieldName": "CreatedOnStart", "FieldValue": region[0], "IsDateTime": true });
+                                    FilterList.push({ "Operator": "le", "FieldName": "CreatedOnEnd", "FieldValue": region[1], "IsDateTime": true });
+                                } else {
+                                    FilterList.push({ "Operator": "ge", "FieldName": "CreatedOnStart", "FieldValue": region[0], "IsDateTime": true });
+                                    FilterList.push({ "Operator": "lt", "FieldName": "CreatedOnEnd", "FieldValue": region[1], "IsDateTime": true });
+                                }
+                            }
+                        }
+                        break;
+                        //日志类型
+                    case "LogType":
+                        if (item.ValueList.length > 0) {
+                            value = { "Operator": "eq", "FieldName": "LogType", "FieldValue": item.ValueList.join(",") };
+                            FilterList.push(value);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return { "FilterListStr": JSON.stringify(FilterList) };
+        }
+
+        //事件绑定
+        function bindEvents() {
+            //重置
+            $("#btn_resetSearch").on("click", function () {
+                $('#input_custom_searchbox :input').not(':button, :submit, :reset, :hidden').val('').removeAttr('checked').removeAttr('selected');
+                search();
+            });
+
+            function search() {
+                var paramList = $(".searchbox").getParamList();
+                gridLog.load(handleParam(paramList));
+            }
+
+            $("#btn_search").on("click", function () {
+                search();
+            });
+
+            $("#btn_Download_Select").on("click", function () {
+                //获取选中数据
+                var datas = gridLog.getSelectedRows();
+                if (datas.length > 0) {
+                    var arrPath = [];
+                    $(datas).each(function (i, item) {
+                        arrPath.push(item.FilePath);
+                    });
+                    console.log(arrPath)
+                    $.download("/Log/DownloadSomeLog", { "FileList": arrPath.join("|") }, "post");
+                } else {
+                    layer.tips('请选择项', "#btn_Download_Select", {
+                        tips: 3
+                    });
+                }
+            });
+
+            $("#btn_Download_All").on("click", function () {
+                window.open("/Log/Download");
+            });
+        }
+    </script>
+}

@@ -34,7 +34,7 @@ namespace Ywdsoft.Modules
             {
                 //取出单条记录数据
                 string TaskId = r.Id;
-                JsonBaseModel<string> result = new JsonBaseModel<string>();
+                ApiResult<string> result = new ApiResult<string>();
                 try
                 {
                     TaskHelper.RunById(TaskId);
@@ -49,7 +49,7 @@ namespace Ywdsoft.Modules
 
             Get["/GetById/{Id}"] = r =>
             {
-                JsonBaseModel<TaskUtil> result = new JsonBaseModel<TaskUtil>();
+                ApiResult<TaskUtil> result = new ApiResult<TaskUtil>();
                 try
                 {
                     //取出单条记录数据
@@ -86,7 +86,7 @@ namespace Ywdsoft.Modules
             //删除任务接口
             Delete["/{Id}"] = r =>
             {
-                JsonBaseModel<string> result = new JsonBaseModel<string>();
+                ApiResult<string> result = new ApiResult<string>();
                 try
                 {
                     string TaskId = r.Id;
@@ -103,7 +103,7 @@ namespace Ywdsoft.Modules
             //更新任务运行状态
             Put["/{Id}/{Status:int}"] = r =>
             {
-                JsonBaseModel<string> result = new JsonBaseModel<string>();
+                ApiResult<string> result = new ApiResult<string>();
                 try
                 {
                     TaskStatus Status = Enum.ToObject(typeof(TaskStatus), r.Status);

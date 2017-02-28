@@ -25,7 +25,14 @@ namespace Ywdsoft.Modules
             {
                 var ErrorMsg = this.Request.Query.ErrorMsg;
                 var UserCode = this.Request.Query.UserCode;
-                return View["index", new { ErrorMsg = ErrorMsg, UserCode = UserCode, Title = SystemConfig.SystemTitle, ProgramName = SystemConfig.ProgramName }];
+                return View["index", new
+                {
+                    ErrorMsg = ErrorMsg,
+                    UserCode = UserCode,
+                    Title = SystemConfig.SystemTitle,
+                    ProgramName = SystemConfig.ProgramName,
+                    ShowOriginalAccountInfo = SystemConfig.ShowOriginalAccountInfo ? "1" : "0"
+                }];
             };
 
             Post["/"] = r =>

@@ -29,6 +29,12 @@ namespace Ywdsoft.Utility.ConfigHandler
         public static string StaticVersion { get; set; }
 
         /// <summary>
+        /// 登录页是否显示初始信息
+        /// </summary>
+        [Config(Name = "登录页是否显示初始信息", DefaultValue = true)]
+        public static bool ShowOriginalAccountInfo { get; set; }
+
+        /// <summary>
         /// 是否显示异常信息
         /// </summary>
         [Config(Name = "是否显示异常", DefaultValue = true)]

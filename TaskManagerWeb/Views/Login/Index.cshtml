@@ -3,10 +3,8 @@
 @{
     ViewBag.Title = "登录-" + @Model.Title;
 }
-
 @section style{
     <link rel="stylesheet" href="~/Content/Css/login.css" />
-
 }
 <div class="layout login_wrap">
     <h2>@Model.ProgramName</h2>
@@ -30,6 +28,9 @@
             <div class="btn_area">
                 <input class="btn btn-success btn-block" type="submit" id="btn_login" value="登录">
             </div>
+        </div>
+        <div class='ta-c @{string cls = Model.ShowOriginalAccountInfo =="0" ? "hidden" : "";@cls}' style="padding-top:30px;">
+            <span class="label label-warning">   初始登录用户名：admin 密码：1</span>         
         </div>
     </form>
 </div>

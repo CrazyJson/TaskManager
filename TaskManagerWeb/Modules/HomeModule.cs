@@ -8,6 +8,7 @@
 using Nancy;
 using Ywdsoft.Utility;
 using Ywdsoft.Utility.ConfigHandler;
+using Ywdsoft.Utility.Mef;
 
 namespace Ywdsoft.Modules
 {
@@ -31,6 +32,25 @@ namespace Ywdsoft.Modules
             Get["/DestTop"] = r =>
             {
                 return View["DestTop", MachineNumber.GetMachineInfo()];
+            };
+
+            //修改密码
+            Post["/Home/ChgPwd"] = r =>
+            {
+                ApiResult<string> result = new ApiResult<string>();
+                string PasswordOne = this.Request.Form.PasswordOne;
+                string PasswordTwo = this.Request.Form.PasswordTwo;
+                IUserService UserService = MefConfig.TryResolve<IUserService>();
+                if (string.IsNullOrEmpty(PasswordOne) || string.IsNullOrEmpty(PasswordTwo) || !PasswordOne.Equals(PasswordTwo))
+                {
+                    result.HasError = true;
+                    result.Message = "两次密码不一致";
+                }
+                else
+                {
+                    UserService.ChgPwd(UserAccountInfo.UserGUID, DESEncrypt.Encrypt(PasswordOne));
+                }
+                return result;
             };
         }
     }

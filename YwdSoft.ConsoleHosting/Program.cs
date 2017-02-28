@@ -61,7 +61,8 @@ namespace Ywdsoft.ConsoleHosting
                 //5.加载SQL信息到缓存中
                 XmlCommandManager.LoadCommnads(SysConfig.XmlCommandFolder);
 
-                DapperDemoService.Test();
+                //测试dapper orm框架
+                //DapperDemoService.Test();
 
                 //启动站点
                 using (NancyHost host = Startup.Start(SystemConfig.WebPort))
@@ -82,6 +83,7 @@ namespace Ywdsoft.ConsoleHosting
             {
                 Console.WriteLine(ex);
             }
+            Console.Read();
         }
     }
 }

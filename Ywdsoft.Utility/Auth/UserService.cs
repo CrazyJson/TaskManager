@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.Composition;
+﻿using System;
+using System.ComponentModel.Composition;
 using Ywdsoft.Model.Common;
 
 namespace Ywdsoft.Utility
@@ -22,6 +23,13 @@ namespace Ywdsoft.Utility
         /// <param name="Password">密码</param>
         /// <returns>用户信息</returns>
         UserAccount GetUserInfo(string UserCode, string Password);
+
+        /// <summary>
+        /// 修改用户密码
+        /// </summary>
+        /// <param name="UserGUID">用户Id</param>
+        /// <param name="Pwd">用户密码</param>
+        void ChgPwd(string UserGUID, string Pwd);
     }
 
     /// <summary>
@@ -30,6 +38,17 @@ namespace Ywdsoft.Utility
     [Export(typeof(IUserService))]
     public class UserService : IUserService
     {
+        /// <summary>
+        /// 修改用户密码
+        /// </summary>
+        /// <param name="UserGUID">用户Id</param>
+        /// <param name="Pwd">用户密码</param>
+        public void ChgPwd(string UserGUID, string Pwd)
+        {
+            string strSQL = "update p_User set Password=@Password WHERE UserGUID = @UserGUID";
+            SQLHelper.ExecuteNonQuery(strSQL, new { UserGUID = UserGUID, Password = Pwd });
+        }
+
         /// <summary>
         /// 获取用户信息
         /// </summary>

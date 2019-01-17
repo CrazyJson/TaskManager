@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Ywdsoft.Utility.Command
 {
@@ -21,6 +22,15 @@ namespace Ywdsoft.Utility.Command
         /// 更新资源文件目录名
         /// </summary>
         private static string[] ArrCopyDir = new string[] { "Content", "Views", "Template" };
+
+        /// <summary>
+        /// 获取静态资源文件夹目录
+        /// </summary>
+        /// <returns>静态资源文件夹目录</returns>
+        public static string[] GetResurceDir()
+        {
+            return ArrCopyDir;
+        }
 
         /// <summary>
         /// 处理的命令
@@ -89,6 +99,77 @@ namespace Ywdsoft.Utility.Command
             }
             LogHelper.WriteLog(sb.ToString());
             return sb.ToString();
+        }
+    }
+
+    public class DevelperHelper
+    {
+        /// <summary>
+        /// 监听文件改变
+        /// </summary>
+        public static void WatcherResourceChange()
+        {
+            //获取当前运行路径的上级目录（父目录）
+            string baseDirectorry = System.Environment.CurrentDirectory;
+            DirectoryInfo topDir = null;
+            do
+            {
+                topDir = Directory.GetParent(baseDirectorry);
+                if (topDir != null)
+                {
+                    baseDirectorry = topDir.FullName;
+                }
+            }
+            while (topDir != null && topDir.GetDirectories().FirstOrDefault(e => e.Name == "TaskManagerWeb") == null);
+            if (topDir != null)
+            {
+                DirectoryInfo webDir = topDir.GetDirectories().FirstOrDefault(e => e.Name == "TaskManagerWeb");
+                var arrPath = WebResourceUpdateCommand.GetResurceDir();
+                string[] arrRealPath = new string[arrPath.Length];
+                for (int i = 0; i < arrPath.Length; i++)
+                {
+                    arrRealPath[i] = webDir.FullName + "\\" + arrPath[i] + "\\";
+                }
+                Parallel.ForEach(arrRealPath, Watch);
+            }
+        }
+
+        private static void Watch(string Dir)
+        {
+            //初始化监控器
+            FileSystemWatcher watcher = new FileSystemWatcher(Dir);
+            watcher.Created += new FileSystemEventHandler(OnProcess);
+            watcher.Changed += new FileSystemEventHandler(OnProcess);
+            watcher.IncludeSubdirectories = true;
+            watcher.EnableRaisingEvents = true;
+        }
+
+        /// <summary>
+        /// 文件改变事件监听
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void OnProcess(object sender, FileSystemEventArgs e)
+        {
+            try
+            {
+                if (!e.FullPath.EndsWith(".TMP"))
+                {
+                    return;
+                }
+                string realPath = e.FullPath.Split('~')[0];
+                if (File.Exists(realPath))
+                {
+                    System.Threading.Thread.Sleep(1000);
+                    string desDir = System.Environment.CurrentDirectory + realPath.Substring(realPath.IndexOf("TaskManagerWeb") + "TaskManagerWeb".Length);
+                    File.Copy(realPath, desDir, true);
+                    LogHelper.WriteLog("资源文件" + Path.GetFileName(realPath) + "复制完成");
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLog("资源文件监听改变刷新异常", ex);
+            }
         }
     }
 }

@@ -60,6 +60,8 @@ namespace Ywdsoft.ConsoleHosting
 
                 //5.加载SQL信息到缓存中
                 XmlCommandManager.LoadCommnads(SysConfig.XmlCommandFolder);
+                //开发时监听资源文件变化，用于实时更新
+                DevelperHelper.WatcherResourceChange();
 
                 //测试dapper orm框架
                 //DapperDemoService.Test();
@@ -71,10 +73,15 @@ namespace Ywdsoft.ConsoleHosting
                     string url = string.Format("http://127.0.0.1:{0}", SystemConfig.WebPort);
                     Process.Start(url);
                     Console.WriteLine("系统已启动，当前监听站点地址:{0}", url);
-
-                    //4.消息队列启动
-                    RabbitMQClient.InitClient();
-
+                    try
+                    {
+                        //4.消息队列启动
+                        RabbitMQClient.InitClient();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
                     //5.系统命令初始化
                     CommandHelp.Init();
                 }

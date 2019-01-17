@@ -9,6 +9,7 @@ using Ywdsoft.Utility;
 using Nancy;
 using Nancy.ModelBinding;
 using System;
+using System.Collections.Generic;
 
 namespace Ywdsoft.Modules
 {
@@ -69,6 +70,27 @@ namespace Ywdsoft.Modules
             {
                 QueryCondition condition = this.Bind<QueryCondition>();
                 return Response.AsJson(TaskHelper.Query(condition));
+            };
+
+            //重新加载任务接口
+            Post["/Reload"] = r =>
+            {
+                ApiResult<string> result = new ApiResult<string>();
+                try
+                {
+                    List<string> listTaskId = this.Bind<List<string>>();
+                    foreach (string TaskId in listTaskId)
+                    {
+                        var taskUtil = TaskHelper.GetById(TaskId);
+                        QuartzHelper.ScheduleJob(taskUtil, true);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    result.HasError = true;
+                    result.Message = ex.Message;
+                }
+                return Response.AsJson(result);
             };
 
             //保存数据

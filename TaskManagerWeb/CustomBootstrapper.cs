@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.IO;
 using Ywdsoft.Model.Common;
 using Ywdsoft.Utility;
+using Ywdsoft.Utility.ConfigHandler;
 
 namespace Ywdsoft
 {
@@ -29,8 +30,16 @@ namespace Ywdsoft
         {
             base.ApplicationStartup(container, pipelines);
 
+            StaticConfiguration.EnableHeadRouting = true;
+
             pipelines.AfterRequest += ctx =>
             {
+                if (SystemConfig.ApiCros)
+                {
+                    ctx.Response.Headers["Access-Control-Allow-Origin"] = "*";
+                    ctx.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type";
+                    ctx.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
+                }
                 if (ctx.Response.StatusCode == HttpStatusCode.NotFound)
                 {
                     ctx.Response = new RedirectResponse("/Error/NotFound?returnUrl=" + Uri.EscapeDataString(ctx.Request.Path));

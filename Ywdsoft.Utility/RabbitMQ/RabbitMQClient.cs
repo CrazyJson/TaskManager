@@ -17,6 +17,8 @@ namespace Ywdsoft.Utility.RabbitMQ
     /// </summary>
     public class RabbitMQClient : IDisposable
     {
+        private static int ReConnectCount = 0;
+
         /// <summary>
         /// RabbitMQ连接对象
         /// </summary>
@@ -65,14 +67,23 @@ namespace Ywdsoft.Utility.RabbitMQ
                 try
                 {
                     RbConnection = FactoryFactory.CreateConnection();
+                    ReConnectCount = 0;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     LogHelper.WriteLog("MQ初始化连接异常", ex);
                     // 休眠3秒后再启动连接
                     Random r = new Random();
                     Thread.Sleep(r.Next(100, 5000));
-                    goto __loop;
+                    if (ReConnectCount < 3)
+                    {
+                        ReConnectCount++;
+                        goto __loop;
+                    }
+                    else
+                    {
+                        throw ex;
+                    }
                 }
             }
         }
@@ -143,7 +154,7 @@ namespace Ywdsoft.Utility.RabbitMQ
                     }
 
                     if (reconnect)
-                    {                      
+                    {
                         // 休眠3秒后再启动连接
                         Random r = new Random();
                         Thread.Sleep(r.Next(100, 5000));

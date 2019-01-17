@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ywdsoft.XmlCommand", "Ywdso
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dapper.SimpleCRUD", "Dapper.SimpleCRUD\Dapper.SimpleCRUD.csproj", "{B8DFFA5B-823E-48F2-B271-8374438F40BE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ywdsoft.WindowService", "Ywdsoft.WindowService\Ywdsoft.WindowService.csproj", "{AEAADB63-D1C2-48E8-9323-E94E94750FDA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,6 +72,10 @@ Global
 		{B8DFFA5B-823E-48F2-B271-8374438F40BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8DFFA5B-823E-48F2-B271-8374438F40BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8DFFA5B-823E-48F2-B271-8374438F40BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEAADB63-D1C2-48E8-9323-E94E94750FDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEAADB63-D1C2-48E8-9323-E94E94750FDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEAADB63-D1C2-48E8-9323-E94E94750FDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEAADB63-D1C2-48E8-9323-E94E94750FDA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -280,7 +280,7 @@ namespace Ywdsoft.Utility
             fileAppender.MaxSizeRollBackups = 100;
             fileAppender.MaximumFileSize = "1MB";
             fileAppender.RollingStyle = log4net.Appender.RollingFileAppender.RollingMode.Size;
-            fileAppender.DatePattern = "yyyyMMddHH'.log'";
+            fileAppender.DatePattern = "'log-"+ repository.Name + "-'yyyyMMddHH'.log'";
             fileAppender.StaticLogFileName = false;
             fileAppender.RollingStyle = RollingFileAppender.RollingMode.Date;
 
@@ -293,6 +293,15 @@ namespace Ywdsoft.Utility
             fileAppender.Encoding = Encoding.UTF8;
             fileAppender.ActivateOptions();
             log4net.Config.BasicConfigurator.Configure(repository, fileAppender);
+
+            ConsoleAppender consoleAppender = new ConsoleAppender();
+            fileAppender.Name = "ConsoleAppender";
+            PatternLayout patternLayout1 = new PatternLayout();
+            patternLayout1.ConversionPattern = "%d [%t] %-5p %m%n";
+            patternLayout1.ActivateOptions();
+            consoleAppender.Layout = patternLayout1;
+            consoleAppender.ActivateOptions();
+            log4net.Config.BasicConfigurator.Configure(repository, consoleAppender);
         }
 
 

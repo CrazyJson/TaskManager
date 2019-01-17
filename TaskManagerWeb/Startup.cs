@@ -17,7 +17,10 @@ namespace Owin_Nancy
         {
             try
             {
-                _host = new NancyHost(new Uri(string.Format("http://localhost:{0}", port)));
+                //返回content-length
+                HostConfiguration configuration = new HostConfiguration();
+                configuration.AllowChunkedEncoding = false;
+                _host = new NancyHost(configuration, new Uri(string.Format("http://localhost:{0}", port)));
                 _host.Start();
                 LogHelper.WriteLog("Web管理站点启动成功,请打开 http://127.0.0.1:" + port + "进行浏览");
 

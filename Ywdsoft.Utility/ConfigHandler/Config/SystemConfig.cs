@@ -41,6 +41,12 @@ namespace Ywdsoft.Utility.ConfigHandler
         public static bool ShowException { get; set; }
 
         /// <summary>
+        /// 是否显示异常信息
+        /// </summary>
+        [Config(Name = "接口允许跨域访问", DefaultValue = false)]
+        public static bool ApiCros { get; set; }
+
+        /// <summary>
         /// MQ连接端口
         /// </summary>
         [Config(Name = "管理站点端口", DefaultValue = "9000", ValidateRule = "min=0 digits=true")]

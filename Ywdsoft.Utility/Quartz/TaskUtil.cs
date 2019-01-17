@@ -164,7 +164,7 @@ namespace Ywdsoft.Utility
         /// <param name="TaskID">任务id</param>
         public static void UpdateRecentRunTime(string TaskID, DateTime LastRunTime)
         {
-            SQLHelper.ExecuteNonQuery("UPDATE p_Task SET RecentRunTime=CURRENT_TIMESTAMP,LastRunTime=@LastRunTime WHERE TaskID=@TaskID", new { TaskID = TaskID, LastRunTime = LastRunTime });
+            SQLHelper.ExecuteNonQuery("UPDATE p_Task SET RecentRunTime=datetime('now','localtime'),LastRunTime=@LastRunTime WHERE TaskID=@TaskID", new { TaskID = TaskID, LastRunTime = LastRunTime });
         }
 
         /// <summary>

@@ -11,7 +11,7 @@ namespace Ywdsoft.Utility.Mef
         public static void Init()
         {
             //1.Mef接管
-            DirectoryCatalog catalog = new DirectoryCatalog(AppDomain.CurrentDomain.BaseDirectory);
+            DirectoryCatalog catalog = new DirectoryCatalog(AppDomain.CurrentDomain.BaseDirectory, "Ywdsoft.*.dll");
             _container = new CompositionContainer(catalog);
             _container.ComposeParts();
         }
